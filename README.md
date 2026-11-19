@@ -185,3 +185,7 @@ docs/                Evidence template, demo script, submission copy
 
 ## License
 MIT © 2026 Samer Tallauze.
+
+## No-laptop option: deploy and run the demo in GitHub Actions
+
+No local installations are required. Follow the [cloud-only deployment guide](docs/CLOUD_NO_LOCAL_SETUP.md), create a **new testnet-only wallet**, and put its key in a **GitHub Actions secret named `FLOWPILOT_TESTNET_PRIVATE_KEY` (never in chat)**. Use the [Cloud Testnet workflow](https://github.com/samertall/flowpilot-omni/actions/workflows/cloud-testnet.yml): run `preflight`, then `deploy`, `demo`, and `verify` if callback processing is delayed. This automatically produces public contract addresses and live callback evidence only when actual transactions succeed. This project is not officially submitted until real proof and a qualifying video are provided.
