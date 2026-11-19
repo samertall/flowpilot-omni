@@ -4,6 +4,17 @@ The code runs on **GitHub Actions**, not on your computer. No terminal, local Fo
 
 **Do not paste any private key or seed phrase into ChatGPT, a GitHub issue, pull request, workflow input, or repository file.** A repository **Actions secret** is encrypted and is only exposed to a workflow at runtime. Even so, repository administrators and workflows with secret access must be trusted, so this must be a disposable wallet with **no mainnet funds, NFTs, approvals, or personal holdings**. Never reuse your main wallet.
 
+## Funding without laptop software (verified wallet)
+
+Public, disposable testnet address from GitHub Actions: `0x24E895cBE3c427E08A7A013553813933cffeB68A`. Never share its private key.
+
+If a normal public faucet requires Ethereum **mainnet** funds, do **not** purchase or transfer real ETH to this disposable deployment wallet. Instead, sign in to an established testnet-only faucet service using its normal account verification, and request **testnet** tokens for the address above:
+
+- Base Sepolia: https://ethglobal.com/faucet/base-sepolia-84532 (listed 0.05 test ETH/day; sign-in required)
+- Unichain Sepolia: https://ethglobal.com/faucet/unichain-sepolia-1301 (listed 0.05 test ETH/day; sign-in required)
+
+Faucet availability and eligibility may vary. Avoid bypassing CAPTCHA, account checks or rate limits. The cloud workflow can request Lasna lREACT after Base Sepolia test ETH arrives, using the explicitly approved `faucet` phase. The public balance and transaction hashes must be checked before running `deploy`.
+
 ## Four steps in your browser (phone is fine)
 
 1. Create a fresh wallet dedicated **exclusively** to this testnet demo. Keep its seed phrase/private key outside ChatGPT and public code.
