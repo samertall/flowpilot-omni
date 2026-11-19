@@ -1,13 +1,14 @@
 # FlowPilot — Live three-chain demo and submission gate
 
-**Current state:** No live transaction hashes or contract addresses are pre-populated. This document deliberately does not imply deployment or submission.
+**Current state:** GitHub source is public and Foundry CI passes 18/18 tests; the web preview is deployed. **No live transaction hashes or contract addresses are populated.** This document does not imply blockchain deployment or submission.
 
 ## Part A — Local compile and tests (first)
 
 Use a throwaway testnet-only EVM account, a supported shell (Windows 11: WSL Ubuntu recommended), Foundry (`forge`, `cast`), Git and Node 20+.
 
 ```bash
-git init                       # skip if already a git repository
+git clone https://github.com/samertall/flowpilot-omni.git
+cd flowpilot-omni
 forge install foundry-rs/forge-std --no-commit
 forge install Reactive-Network/reactive-lib-omni --no-commit
 forge build
@@ -76,7 +77,7 @@ The verifier requires genuine matching logs and on-chain state. On success, add 
 
 ## Part F — Public materials and final submission
 
-1. Create a new public repository named `flowpilot-omni`, commit the project **without `.env`, private keys, or API secrets**, and run the GitHub Actions pipeline.
+1. **Completed:** public source repository https://github.com/samertall/flowpilot-omni; CI passed 18/18 Foundry tests. **Pending:** publish verified contract addresses and the three-chain execution evidence.
 2. Record the live flow, including all three explorer transaction hashes, in a video **shorter than 3 minutes**; see `docs/VIDEO_SCRIPT.md`. A presentation or UI mock alone is insufficient.
 3. Include the exact contract addresses, hash links and repository URL in `docs/SUBMISSION.md`.
 4. Submit the project to https://dorahacks.io/hackathon/reactive-omni-buildathon/detail before **December 5, 2026** (verify the precise portal close time in DoraHacks).

@@ -26,8 +26,8 @@ Without the Lasna `react()` event listener and `requestCallbackV_1_0`, the payou
 Solidity 0.8.29, Reactive Omni / Lasna testnet, Base Sepolia, Unichain Sepolia, Foundry, ethers.js v6, vanilla responsive HTML/CSS/JS, GitHub Actions. Open-source MIT.
 
 ## Deliverable fields (replace only with VERIFIED values)
-Public repository: PENDING
-Live demo URL: PENDING
+Public repository: https://github.com/samertall/flowpilot-omni
+Frontend preview URL (contracts not deployed): https://flowpilot-omni.vercel.app
 PaymentGate address (Base Sepolia): PENDING
 OmniRelay address (Lasna): PENDING
 PayoutVault address (Unichain Sepolia): PENDING
@@ -36,6 +36,10 @@ Origin event transaction hash: PENDING
 Reactive transaction hash: PENDING
 Destination callback transaction hash: PENDING
 Demo video (< 3 min): PENDING
+
+## Verified build and demo status
+GitHub Actions: https://github.com/samertall/flowpilot-omni/actions/runs/44510475344 — 18/18 Foundry tests passing.
+Intro preview video: https://github.com/samertall/flowpilot-omni/blob/main/docs/flowpilot-intro-preview.mp4 — not a substitute for actual live testnet execution.
 
 ## Non-negotiable disclosure
 This is an unaudited testnet prototype. Demo fUSD is not real USD. Base ETH is not bridged to Unichain. End-to-end throughput or latency must be measured rather than inferred from the advertised Omni block interval.

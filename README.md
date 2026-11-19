@@ -4,7 +4,7 @@
 
 FlowPilot is an open-source, wallet-connected automation builder that releases **prefunded demo escrow tokens on Unichain Sepolia** when a **qualifying native ETH payment occurs on Base Sepolia**, using **Reactive Omni's Lasna testnet** as the only execution relay.
 
-> **Current status (2026-11-19):** Source code and deployment tools are prepared. Desktop/mobile browser rendering has been checked with an offline ethers mock; Solidity compilation, live contract tests and full three-chain delivery have **not** been executed in this environment. This is not proof of a live deployment. The contracts must be deployed and validated on testnets before the submission is eligible for execution scoring. There are no fabricated transaction IDs or contract addresses.
+> **Current status (2026-11-19):** Public source repository published; GitHub Actions **successfully compiled** the Solidity contracts and passed **18/18 Foundry tests**, JavaScript checks and JSON validation. The responsive frontend is live at [flowpilot-omni.vercel.app](https://flowpilot-omni.vercel.app). **No real three-chain contract deployment or event-to-callback transaction proof has been completed yet.** The hosted interface is a functional UI preview, not a verified live blockchain demo. No contract addresses or transaction IDs are fabricated.
 
 ## The user problem
 
@@ -58,8 +58,9 @@ Official docs: https://dev.reactive.network/reactive-contracts and https://dev.r
 Prerequisites: [Foundry](https://getfoundry.sh/), Git, Python 3, a browser wallet, **testnet-only** ETH on Base and Unichain, and testnet REACT on Lasna.
 
 ```bash
-# In this repository extracted from the ZIP
-git init
+# Clone the published repository
+git clone https://github.com/samertall/flowpilot-omni.git
+cd flowpilot-omni
 forge install foundry-rs/forge-std --no-commit
 forge install Reactive-Network/reactive-lib-omni --no-commit
 forge build
@@ -124,6 +125,11 @@ See [`docs/LIVE_EXECUTION_CHECKLIST.md`](docs/LIVE_EXECUTION_CHECKLIST.md) for d
 
 
 ## Preview assets
+
+**Live interface:** https://flowpilot-omni.vercel.app (connects to contracts only after real deployment addresses are configured).
+
+![FlowPilot desktop UI](docs/preview-dashboard-desktop.png)
+
 
 - [`docs/preview-dashboard-desktop.png`](docs/preview-dashboard-desktop.png): desktop UI capture.
 - [`docs/preview-dashboard-mobile.png`](docs/preview-dashboard-mobile.png): mobile UI capture.

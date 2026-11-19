@@ -1,7 +1,7 @@
 {
   "checkedAt": "2026-11-19T10:50:03.712866+00:00",
-  "status": "STATIC_VALIDATION_PASSED",
-  "project": "FlowPilot \u2014 Reactive Omni Buildathon",
+  "status": "CI_PASS_LIVE_DEPLOYMENT_PENDING",
+  "project": "FlowPilot — Reactive Omni Buildathon",
   "filePresencePass": true,
   "jsonPass": true,
   "bashSyntaxPass": true,
@@ -11,11 +11,16 @@
   "includedFilesChecked": 19,
   "solidityTestFunctionsWritten": 18,
   "forgeAvailable": false,
-  "foundryCompilationExecuted": false,
-  "foundryTestsExecuted": false,
+  "foundryCompilationExecuted": true,
+  "foundryTestsExecuted": true,
   "testnetDeploymentConfirmed": false,
   "originToCallbackLoopConfirmed": false,
-  "githubRepoPublished": false,
+  "githubRepoPublished": true,
   "doraHacksSubmitted": false,
-  "note": "No live execution was observed. Do not mistake static validation or mock browser screenshots for on-chain proof."
+  "note": "GitHub CI compiled Solidity and passed 18 of 18 Foundry tests. The deployed public frontend was checked via external fetch. No three-chain contract deployment or verified callback execution was observed; this is not on-chain proof.",
+  "foundryTestsPassed": 18,
+  "githubActionsRun": "https://github.com/samertall/flowpilot-omni/actions/runs/44510475344",
+  "frontendDeployed": true,
+  "frontendUrl": "https://flowpilot-omni.vercel.app",
+  "frontendVerifiedReachable": true
 }

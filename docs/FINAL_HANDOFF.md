@@ -5,16 +5,15 @@
 Install Foundry from https://getfoundry.sh/ using Windows WSL or a supported environment. For users on Windows 11, **WSL Ubuntu** is the recommended option. Use WSL or Git Bash for the shell scripts. You need a new testnet-only EVM wallet funded for the three respective networks.
 
 ```bash
-unzip flowpilot-omni.zip
+git clone https://github.com/samertall/flowpilot-omni.git
 cd flowpilot-omni
-git init
 forge install foundry-rs/forge-std --no-commit
 forge install Reactive-Network/reactive-lib-omni --no-commit
 forge build
 forge test -vvv
 ```
 
-> Local source validation performed during preparation: `node --check app/app.js`, `bash -n scripts/*.sh`, JSON parse, contract syntax delimiters. Foundry was **not available** during preparation; compilation and contract tests are **not yet verified**.
+> GitHub Actions has now compiled Solidity and passed 18/18 Foundry tests, plus JavaScript syntax and JSON validation: https://github.com/samertall/flowpilot-omni/actions/runs/44510475344. This does **not** establish live three-chain execution.
 
 ## 2. Fund testnet-only wallet
 
@@ -38,19 +37,13 @@ python3 -m http.server --directory app 8080
 
 Open `http://localhost:8080`. Follow README's live sequence. Use the on-chain debug tool at https://dev.reactive.network/reactive-mcp and the Lasna explorer for any stuck callback. Enter real event / reactive / callback transaction hashes into `docs/EVIDENCE.md`.
 
-## 5. Publish public repository
+## 5. Public repository and website (completed)
 
-Create a **new public GitHub repository** named `flowpilot-omni` under your own account (do not use an existing unrelated repository). From the root of this project:
+- Public GitHub source: https://github.com/samertall/flowpilot-omni
+- Public frontend preview: https://flowpilot-omni.vercel.app
+- Green Solidity/JS checks: https://github.com/samertall/flowpilot-omni/actions/runs/44510475344
 
-```bash
-git add .
-git commit -m "feat: FlowPilot Reactive Omni buildathon submission"
-git branch -M main
-git remote add origin https://github.com/samertall/flowpilot-omni.git
-git push -u origin main
-```
-
-The configured GitHub connection identifies the account as `samertall`. Never include `.env` or wallet secrets. Check the GitHub Actions Solidity test workflow reaches success.
+**Still needed:** deploy contracts on the three testnets; update `app/deployments.json` with **verified** addresses; push it to GitHub so the hosted preview becomes an interactive blockchain demo. Do not commit `.env` or any private key.
 
 ## 6. Publish demo and submit
 
