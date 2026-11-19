@@ -56,7 +56,7 @@ contract FlowPilotTest is Test {
         token.faucet();
         gate = new PaymentGate();
         relay = new OmniRelay(BASE, address(gate), UNI);
-        vault = new PayoutVault(address(token), IPayable(PROXY), address(relay));
+        vault = new PayoutVault(address(token), IPayable(payable(PROXY)), address(relay));
         relay.setDestination(address(vault));
         token.approve(address(vault), PAYOUT);
         vault.createRule(RULE, merchant, beneficiary, PAYOUT, MIN_PAYMENT, uint64(block.timestamp + 1 days));
