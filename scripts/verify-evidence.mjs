@@ -47,7 +47,7 @@ async function check() {
   };
   if ([addresses.gate,addresses.relay,addresses.vault,addresses.token,addresses.proxy].some(a => a === '0x0000000000000000000000000000000000000000')) fail('One or more deployment addresses are zero');
   const base = new JsonRpcProvider(env.BASE_RPC_URL || 'https://sepolia.base.org', 84532, { staticNetwork: true });
-  const lasnaProvider = new JsonRpcProvider(env.LASNA_RPC_URL || 'https://lasna-rpc.rnk.dev/', 5318007, { staticNetwork: true });
+  const lasnaProvider = new JsonRpcProvider(env.LASNA_RPC_URL || 'https://lasna-omni-rpc.rnk.dev/', 5318007, { staticNetwork: true });
   const uni = new JsonRpcProvider(env.UNI_RPC_URL || 'https://sepolia.unichain.org', 1301, { staticNetwork: true });
   const [a,b,c] = await Promise.all([base.send('eth_chainId',[]),lasnaProvider.send('eth_chainId',[]),uni.send('eth_chainId',[])]);
   if (BigInt(a) !== 84532n || BigInt(b) !== 5318007n || BigInt(c) !== 1301n) fail('RPC endpoint reports the wrong network');
@@ -130,7 +130,7 @@ async function check() {
     sourcePaymentETH:formatEther(payment.args.amount), escrowPayoutFUSD:formatUnits(rule.payoutAmount,6),
     transactions:{
       origin:{hash:origin.hash,block:origin.blockNumber,logIndex:payment.log.index,explorer:`https://sepolia.basescan.org/tx/${origin.hash}`},
-      reactive:{hash:reactive.hash,block:reactive.blockNumber,explorer:`https://lasna.reactscan.net/tx/${reactive.hash}`},
+      reactive:{hash:reactive.hash,block:reactive.blockNumber,explorer:`https://lasna-omni.reactscan.net/tx/${reactive.hash}`},
       callback:{hash:callback.hash,block:callback.blockNumber,explorer:`https://sepolia.uniscan.xyz/tx/${callback.hash}`}
     },
     originToCallbackBlockTimestampSeconds:delta !== null && delta>=0 ? delta : null
