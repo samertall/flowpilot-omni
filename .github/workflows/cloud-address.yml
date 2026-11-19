@@ -1,0 +1,45 @@
+name: FlowPilot — Testnet Wallet Address (Read Only)
+
+on:
+  push:
+    branches: [main]
+    paths: ['.flowpilot/address-trigger.json']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  address:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install ethers without lifecycle scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate secret and derive PUBLIC address (no RPC, no transactions)
+        env:
+          FLOWPILOT_TESTNET_PRIVATE_KEY: ${{ secrets.FLOWPILOT_TESTNET_PRIVATE_KEY }}
+        run: |
+          node --input-type=module <<'JS'
+          import {Wallet} from 'ethers';
+          import {writeFileSync} from 'node:fs';
+          const v=process.env.FLOWPILOT_TESTNET_PRIVATE_KEY||'';
+          if(!/^(0x)?[0-9a-fA-F]{64}$/.test(v)) throw new Error('GitHub secret FLOWPILOT_TESTNET_PRIVATE_KEY is missing or invalid.');
+          const address=new Wallet(v.startsWith('0x')?v:'0x'+v).address;
+          const data={address,networkUse:'TESTNET ONLY',createdAt:new Date().toISOString(),status:'ADDRESS_DERIVED_NO_CHAIN_TRANSACTIONS'};
+          writeFileSync('docs/CLOUD_WALLET_ADDRESS.json',JSON.stringify(data,null,2)+'\n');
+          console.log('PUBLIC TESTNET WALLET ADDRESS: '+address);
+          JS
+      - name: Publish PUBLIC address (never private key)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/CLOUD_WALLET_ADDRESS.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: publish public testnet wallet address [skip ci]'
+            git push origin HEAD:main
+          fi
