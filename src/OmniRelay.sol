@@ -48,7 +48,7 @@ contract OmniRelay is AbstractReactive {
         // Invalid / unrelated logs must be ignored, not reverted: reactive gas is metered.
         if (destination == address(0) || log_.chainId != originChainId ||
             log_.contractAddress != originContract || log_.topic0 != PAYMENT_TOPIC ||
-            log_.opCode != 3 || log_.data.length != 32) return;
+            log_.opCode != 4 || log_.data.length != 32) return;
 
         bytes32 ruleId = bytes32(log_.topic1);
         address payer = address(uint160(log_.topic2));
