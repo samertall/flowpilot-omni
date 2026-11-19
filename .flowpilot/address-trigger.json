@@ -1,0 +1,6 @@
+{
+  "operation": "derive_public_address_only",
+  "no_transactions": true,
+  "userConfirmation": "testnet secret configured",
+  "requestedAt": "2026-11-19T14:33:00+03:00"
+}
