@@ -16,13 +16,13 @@ A freelancer, marketplace operator or small team often wants a simple if-then pa
             Base Sepolia · 84532
       PaymentGate.pay(ruleId, merchant)
          │  transfers test ETH to merchant
-         └─ PaymentMade(ruleId,payer,merchant,amount) [LOG3]
+         └─ PaymentMade(ruleId,payer,merchant,amount) [LOG4]
                         │
                         ▼
            Reactive Lasna · 5318007
         OmniRelay.react() via SYSTEM
          ├─ validates source chain and contract
-         ├─ validates event signature and LOG3 shape
+         ├─ validates event signature and LOG4 shape
          ├─ computes proof = hash(chain,contract,txHash,logIndex)
          ├─ deduplicates source log
          └─ SYSTEM.requestCallbackV_1_0()
@@ -152,7 +152,7 @@ See [`docs/LIVE_EXECUTION_CHECKLIST.md`](docs/LIVE_EXECUTION_CHECKLIST.md) for d
 
 ## Security properties and limitations
 
-- Source event authenticity: `react()` requires a call from the official Lasna system and validates origin chain/address, signature, `LOG3` topic count and ABI payload length.
+- Source event authenticity: `react()` requires a call from the official Lasna system and validates origin chain/address, signature, `LOG4` topic count and ABI payload length.
 - `OmniRelay` uses `keccak256(chainId, originContract, txHash, logIndex)` to deduplicate callbacks. Its destination may be configured only once by the deployment owner.
 - Destination authentication checks **both** the official callback proxy and the originating Reactive contract via `AbstractCallback` modifiers.
 - Escrow is token-funded with exact-balance verification, reentrancy protection, immutable routing parameters per rule, and a one-time payout state machine.
