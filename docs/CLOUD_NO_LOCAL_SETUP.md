@@ -9,7 +9,7 @@ The code runs on **GitHub Actions**, not on your computer. No terminal, local Fo
 1. Create a fresh wallet dedicated **exclusively** to this testnet demo. Keep its seed phrase/private key outside ChatGPT and public code.
 2. In [Repository settings → Actions secrets](https://github.com/samertall/flowpilot-omni/settings/secrets/actions), select **New repository secret**. Name it exactly `FLOWPILOT_TESTNET_PRIVATE_KEY` and put the throwaway wallet private key in the **secret's Value field**. This is the only place the key is entered; don't send it to the assistant.
 3. In [Actions → FlowPilot — Cloud Testnet Deployment & Evidence](https://github.com/samertall/flowpilot-omni/actions/workflows/cloud-testnet.yml), choose **Run workflow**, then select `preflight` with `confirm_testnet_broadcast=no`. Read the log for the public wallet address and three chain balances. This phase does **not** send transactions.
-4. Fund this **public testnet address**, then run `deploy` with `confirm_testnet_broadcast=yes`. After a successful run, choose `demo` with `yes` to automatically execute the on-chain demo. If callback delivery takes longer than the runner timeout, choose `verify` with `no` to resume **read-only verification** without paying again.
+4. Fund this **public testnet address** with Base Sepolia and Unichain Sepolia test ETH. If you lack Lasna lREACT, run the optional `faucet` phase with `yes` to request it from the official Reactive Base Sepolia faucet using `0.01` Base Sepolia TESTNET ETH; the workflow records the faucet transaction. Then run `deploy` with `confirm_testnet_broadcast=yes`. After a successful run, choose `demo` with `yes` to automatically execute the on-chain demo. If callback delivery takes longer than the runner timeout, choose `verify` with `no` to resume **read-only verification** without paying again.
 
 ## Which coins and how much?
 
@@ -32,7 +32,7 @@ For Lasna lREACT, the official Reactive docs describe the Base Sepolia faucet at
 - `deploy` uploads `deployments/lasna.json` with deployment contract addresses, transaction hashes and the official callback proxy; it publishes a copy to `app/deployments.json`.
 - `demo` calls the fUSD test faucet, approves escrow, creates an automation rule, sends the payment to the same testnet wallet on Base Sepolia, then waits for `RelayRequested` on Lasna and `PayoutExecuted` from the authorized Unichain callback proxy. It stores source, relay and callback hashes in `docs/CLOUD_EVIDENCE.json`.
 - A successful, **verified** workflow records `VERIFIED_THREE_CHAIN_PAYMENT_CALLBACK`; otherwise the file explicitly says `PENDING_UNVERIFIED_CALLBACK` and the workflow fails. It never invents hashes or success claims.
-- Every run also publishes a public JSON artifact under the GitHub Actions run page. If an automation fails midway, the partial addresses and receipts are still available, avoiding blind redeployments.
+- After a three-chain callback is verified, GitHub Actions also renders a **72-second evidence-backed demo video** with actual transaction hashes at `docs/flowpilot-verified-demo.mp4`. It refuses to generate a success video when proof is incomplete. Every run publishes a public JSON artifact under the GitHub Actions run page. If an automation fails midway, the partial addresses and receipts are still available, avoiding blind redeployments.
 
 ## Submission follow-through
 
