@@ -1,0 +1,113 @@
+name: FlowPilot — Cloud Testnet Deployment & Evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: 'Select preflight first. Deploy and demo require an explicit testnet approval.'
+        type: choice
+        required: true
+        default: preflight
+        options:
+          - preflight
+          - deploy
+          - demo
+          - verify
+      confirm_testnet_broadcast:
+        description: 'For deploy/demo only: enter yes to authorize testnet gas, deposits and demo payment'
+        required: true
+        default: 'no'
+        type: choice
+        options:
+          - 'no'
+          - 'yes'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: flowpilot-cloud-testnet
+  cancel-in-progress: false
+
+jobs:
+  cloud:
+    name: ${{ inputs.phase }} (testnet only)
+    if: ${{ inputs.phase == 'preflight' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CONFIRM_TESTNET_BROADCAST: ${{ inputs.confirm_testnet_broadcast }}
+      BASE_RPC_URL: https://sepolia.base.org
+      LASNA_RPC_URL: https://lasna-omni-rpc.rnk.dev/
+      UNI_RPC_URL: https://sepolia.unichain.org
+      CLOUD_PROOF_TIMEOUT_SECONDS: '480'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Confirm safe network and secret are configured
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ inputs.phase }}" in preflight|verify) : ;; *) test "$CONFIRM_TESTNET_BROADCAST" = yes ;; esac
+          node --check scripts/cloud-runner.mjs
+          python3 -m json.tool app/deployments.json >/dev/null
+      - name: Install dependencies with lifecycle scripts disabled
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Compile and test the contracts (before signing)
+        if: ${{ inputs.phase == 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          forge install foundry-rs/forge-std --no-commit
+          forge install Reactive-Network/reactive-lib-omni --no-commit
+          forge build
+          forge test -q
+      - id: runcloud
+        name: Execute ${{ inputs.phase }} in the cloud
+        shell: bash
+        env:
+          FLOWPILOT_TESTNET_PRIVATE_KEY: ${{ secrets.FLOWPILOT_TESTNET_PRIVATE_KEY }}
+        run: |
+          set +e
+          node scripts/cloud-runner.mjs '${{ inputs.phase }}'
+          code=$?
+          echo "phase_exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload public receipts and partial progress (even when pending)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowpilot-${{ inputs.phase }}-${{ github.run_id }}
+          path: |
+            docs/CLOUD_PREFLIGHT.json
+            deployments/CLOUD_DEPLOY_PROGRESS.json
+            deployments/lasna.json
+            docs/CLOUD_EVIDENCE.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Publish public contract addresses and on-chain evidence
+        if: ${{ inputs.phase != 'preflight' && steps.runcloud.outputs.phase_exit_code != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          test ! -f deployments/lasna.json || git add deployments/lasna.json app/deployments.json
+          test ! -f docs/CLOUD_EVIDENCE.json || git add docs/CLOUD_EVIDENCE.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'testnet: record observed deployment and callback evidence [skip ci]'
+            git push origin HEAD:main
+          fi
+      - name: Fail if live execution was not proven
+        if: ${{ steps.runcloud.outputs.phase_exit_code != '' }}
+        shell: bash
+        run: |
+          test "${{ steps.runcloud.outputs.phase_exit_code }}" = 0 || {
+            echo 'Action incomplete. Inspect logs and public receipt artifact; no successful callback has been claimed.'
+            exit 1
+          }
