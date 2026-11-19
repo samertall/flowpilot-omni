@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+out/
+cache/
+lib/
+broadcast/
+node_modules/
+.DS_Store
+*.pem
+*.key

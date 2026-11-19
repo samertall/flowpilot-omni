@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-11-19T10:50:03.712866+00:00",
+  "status": "STATIC_VALIDATION_PASSED",
+  "project": "FlowPilot \u2014 Reactive Omni Buildathon",
+  "filePresencePass": true,
+  "jsonPass": true,
+  "bashSyntaxPass": true,
+  "javaScriptSyntaxPass": true,
+  "uiPreviewAvailable": true,
+  "introPreviewVideoAvailable": true,
+  "includedFilesChecked": 19,
+  "solidityTestFunctionsWritten": 18,
+  "forgeAvailable": false,
+  "foundryCompilationExecuted": false,
+  "foundryTestsExecuted": false,
+  "testnetDeploymentConfirmed": false,
+  "originToCallbackLoopConfirmed": false,
+  "githubRepoPublished": false,
+  "doraHacksSubmitted": false,
+  "note": "No live execution was observed. Do not mistake static validation or mock browser screenshots for on-chain proof."
+}

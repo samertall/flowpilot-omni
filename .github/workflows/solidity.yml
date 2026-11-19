@@ -1,0 +1,27 @@
+name: Solidity and JavaScript Checks
+on:
+  push:
+  pull_request:
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: foundry-rs/foundry-toolchain@v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Solidity dependencies
+        run: |
+          forge install foundry-rs/forge-std --no-commit
+          forge install Reactive-Network/reactive-lib-omni --no-commit
+      - name: Solidity build and tests
+        run: |
+          forge build
+          forge test -vvv
+      - name: JavaScript syntax checks
+        run: |
+          node --check app/app.js
+          node --check scripts/verify-evidence.mjs
+      - name: Validate deployment config JSON
+        run: python3 -m json.tool app/deployments.json >/dev/null
