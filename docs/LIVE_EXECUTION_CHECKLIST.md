@@ -1,14 +1,24 @@
 # FlowPilot — Live three-chain demo and submission gate
 
-**Current state:** GitHub source is public and Foundry CI passes 18/18 tests; the web preview is deployed. **No live transaction hashes or contract addresses are populated.** This document does not imply blockchain deployment or submission.
+**Current state:** No live transaction hashes or contract addresses are pre-populated. This document deliberately does not imply deployment or submission.
 
-## Part A — Local compile and tests (first)
+## Fast path — browser wallet (no terminal, private key, or local Foundry)
+
+1. Visit `https://flowpilot-omni.vercel.app/deploy.html` and connect a **new, funded testnet-only MetaMask-compatible wallet**.
+2. Ensure the website reports compiler artifacts available. Those artifacts are produced by GitHub Actions after an independently successful Foundry compile and test run; the workflow publishes them into `app/artifacts/*.json` in GitHub.
+3. Approve each of the four deployments, destination configuration, and two **explicit testnet funding** transactions in the wizard. The wallet will prompt you to switch between Base Sepolia (84532), Lasna (5318007), and Unichain Sepolia (1301). Never paste a wallet private key into a website.
+4. Download the JSON deployment record and provide its **public addresses and transaction hashes only** for evidence verification.
+5. The wizard saves addresses for the dashboard automatically. Use the dashboard to claim demo fUSD, escrow a rule, and send a qualifying Base payment; capture the three real hashes.
+6. Run `node scripts/verify-evidence.mjs --origin 0x... --reactive 0x... --callback 0x...` as described below. Submission eligibility requires passing verification.
+
+If the wizard artifacts or wallet connections fail, use the CLI alternative below.
+
+## Part A — Local compile and tests (CLI alternative)
 
 Use a throwaway testnet-only EVM account, a supported shell (Windows 11: WSL Ubuntu recommended), Foundry (`forge`, `cast`), Git and Node 20+.
 
 ```bash
-git clone https://github.com/samertall/flowpilot-omni.git
-cd flowpilot-omni
+git init                       # skip if already a git repository
 forge install foundry-rs/forge-std --no-commit
 forge install Reactive-Network/reactive-lib-omni --no-commit
 forge build
@@ -77,7 +87,7 @@ The verifier requires genuine matching logs and on-chain state. On success, add 
 
 ## Part F — Public materials and final submission
 
-1. **Completed:** public source repository https://github.com/samertall/flowpilot-omni; CI passed 18/18 Foundry tests. **Pending:** publish verified contract addresses and the three-chain execution evidence.
+1. Create a new public repository named `flowpilot-omni`, commit the project **without `.env`, private keys, or API secrets**, and run the GitHub Actions pipeline.
 2. Record the live flow, including all three explorer transaction hashes, in a video **shorter than 3 minutes**; see `docs/VIDEO_SCRIPT.md`. A presentation or UI mock alone is insufficient.
 3. Include the exact contract addresses, hash links and repository URL in `docs/SUBMISSION.md`.
 4. Submit the project to https://dorahacks.io/hackathon/reactive-omni-buildathon/detail before **December 5, 2026** (verify the precise portal close time in DoraHacks).

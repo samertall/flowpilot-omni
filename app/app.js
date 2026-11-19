@@ -62,7 +62,7 @@ function loadConfig(loaded) {
   notice.classList.toggle('good', ready);
   notice.innerHTML = ready
     ? '<strong>Contracts configured.</strong> Connect a testnet wallet to start. The live callback requires both the Lasna relay and the Unichain vault to be funded for gas.'
-    : '<strong>Deployment required.</strong> This interface cannot execute live transactions until contracts are deployed. Open <button class="inline-button" id="open-config" type="button">Settings</button> to enter addresses.';
+    : '<strong>Deployment required.</strong> This interface cannot execute live transactions until contracts are deployed. Use <a href="./deploy.html">Guided testnet deployment</a> or open <button class="inline-button" id="open-config" type="button">Settings</button> to enter addresses.';
   $('open-config')?.addEventListener('click', openSettings);
   renderRules();
 }

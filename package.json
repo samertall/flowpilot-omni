@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "evidence": "node scripts/verify-evidence.mjs",
-    "check": "node --check app/app.js && node --check scripts/verify-evidence.mjs"
+    "check": "node --check app/app.js && node --check app/deploy.js && node --check scripts/verify-evidence.mjs"
   },
   "dependencies": {
     "ethers": "6.15.0"

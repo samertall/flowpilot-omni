@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Deploy the FlowPilot testnet contracts using a connected browser wallet—no private keys or terminal required.">
+<title>Deploy FlowPilot · Wallet-based setup</title>
+<link rel="stylesheet" href="./styles.css">
+<style>
+body{background:#070f16;color:#eef6fc;min-height:100vh} .deploy-wrap{max-width:1030px;margin:0 auto;padding:42px 22px 88px}
+.deploy-head{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:32px}.deploy-head a{color:#b9ecf4;text-decoration:none}
+.deploy-head .wordmark{font-size:24px;font-weight:750;letter-spacing:-1px}.wordmark span{color:#6eebd0}
+.eyebrow{color:#6eebd0;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:12px}
+h1{font-size:clamp(2.1rem,5vw,3.75rem);line-height:1.08;letter-spacing:-.05em;margin:0 0 14px} .sub{color:#9aafbe;max-width:720px;font-size:16px;line-height:1.65;margin-bottom:28px}
+.notice-deploy{border:1px solid #384c56;background:#132531;border-radius:14px;padding:14px 17px;color:#cfe9f0;line-height:1.6;margin:16px 0}
+.actions-row{display:flex;flex-wrap:wrap;align-items:center;gap:13px;margin:26px 0} .deploy-btn{border-radius:9px;border:1px solid #53deb7;background:#45d8ad;color:#07261e;font-weight:750;min-height:46px;padding:0 19px;cursor:pointer;font-size:14px} .deploy-btn.secondary{background:#132530;border-color:#516a75;color:#e5f6fc}.deploy-btn:disabled{opacity:.45;cursor:not-allowed}
+.status{color:#9cb1bf;font-size:13px;overflow-wrap:anywhere}.status.error{color:#ff9c9c}.status.success{color:#79eac3}
+.steps{display:grid;gap:12px;margin-top:22px}.step{background:#0c1c27;border:1px solid #243b47;padding:21px;border-radius:16px;display:grid;gap:16px;grid-template-columns:52px minmax(0,1fr) auto;align-items:center}
+.count{width:44px;height:44px;background:#17323d;border:1px solid #2d515d;border-radius:13px;display:grid;place-items:center;color:#70dcd4;font-weight:750}
+.step h2{font-size:17px;margin:0 0 6px}.step p{margin:0;color:#9cb1bf;font-size:13px;line-height:1.55}.step a{color:#72dccc;overflow-wrap:anywhere}
+.step.done{border-color:#376f59}.step.done .count{background:#164334;color:#85f6b4}.step .deploy-btn{min-width:135px}
+.field{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px}.field input{max-width:160px;border:1px solid #465966;background:#091923;color:#ecf8fc;border-radius:8px;padding:9px;min-height:37px;font-size:13px}
+.deploy-actions{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}.data{border:1px solid #244c51;background:#0a1d21;border-radius:14px;padding:16px;margin-top:20px;font:12px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:270px;overflow:auto}
+.fine{font-size:12px;color:#9cb1bf;margin-top:19px;line-height:1.7}
+@media(max-width:750px){.step{grid-template-columns:43px minmax(0,1fr)}.step .deploy-btn{grid-column:2;justify-self:start}.deploy-wrap{padding:25px 15px 55px}}
+</style>
+</head>
+<body>
+<main class="deploy-wrap">
+ <div class="deploy-head"><div class="wordmark">Flow<span>Pilot</span> / Deployment</div><a href="./index.html">← Back to dashboard</a></div>
+ <div class="eyebrow">REACTIVE OMNI BUILDATHON · TESTNET ONLY</div>
+ <h1>Deploy with your wallet.<br>No terminal. No private keys.</h1>
+ <p class="sub">Deploy four verified-source prototype contracts to Base Sepolia, Reactive Lasna, and Unichain Sepolia. Approve each transaction in your wallet, explicitly fund the Reactive automation, then launch the first real payment-to-payout loop.</p>
+ <div class="notice-deploy"><strong>Safety:</strong> use a new, testnet-only wallet. This page never asks for your seed phrase or private key and does not make transactions without wallet confirmation. The native testnet currencies are required to cover gas. This prototype is unaudited and has no production funds.</div>
+ <div class="actions-row"><button class="deploy-btn" id="connect">Connect testnet wallet</button><span id="wallet" class="status" aria-live="polite">No wallet connected.</span></div>
+ <div class="notice-deploy" id="artifact-note">Checking compiler artifacts…</div>
+ <div class="steps" id="steps"></div>
+ <div class="deploy-actions"><button class="deploy-btn secondary" id="export" disabled>Download deployment record</button><button class="deploy-btn secondary" id="copy" disabled>Copy addresses</button><a class="deploy-btn" id="launch" style="display:none;text-decoration:none;line-height:46px" href="./index.html">Launch FlowPilot →</a></div>
+ <pre class="data" id="summary" aria-live="polite">Contract addresses will appear here after confirmed deployments.</pre>
+ <p id="status" class="status" aria-live="polite"></p>
+ <p class="fine">lREACT faucet: <a href="https://dev.reactive.network/reactive-mainnet" target="_blank" rel="noopener">Official Reactive docs</a>. You can obtain lREACT by calling the documented Base Sepolia faucet with testnet ETH. Funds are required for contract deployment and ongoing Reactive callbacks. If a transaction fails, correct the problem and retry the individual step. This page does not automatically debit your wallet.</p>
+</main>
+<script type="module" src="./deploy.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 FlowPilot is an open-source, wallet-connected automation builder that releases **prefunded demo escrow tokens on Unichain Sepolia** when a **qualifying native ETH payment occurs on Base Sepolia**, using **Reactive Omni's Lasna testnet** as the only execution relay.
 
-> **Current status (2026-11-19):** Public source repository published; GitHub Actions **successfully compiled** the Solidity contracts and passed **18/18 Foundry tests**, JavaScript checks and JSON validation. The responsive frontend is live at [flowpilot-omni.vercel.app](https://flowpilot-omni.vercel.app). **No real three-chain contract deployment or event-to-callback transaction proof has been completed yet.** The hosted interface is a functional UI preview, not a verified live blockchain demo. No contract addresses or transaction IDs are fabricated.
+> **Current status (2026-11-19):** GitHub Actions successfully compiled the Solidity contracts and passed the Foundry test suite. The web UI is available, and a wallet-based deployment wizard has been added. **No real three-chain transaction or callback has yet been verified.** This is not proof of a live deployment. There are no fabricated transaction IDs or contract addresses.
 
 ## The user problem
 
@@ -53,14 +53,27 @@ A freelancer, marketplace operator or small team often wants a simple if-then pa
 
 Official docs: https://dev.reactive.network/reactive-contracts and https://dev.reactive.network/origins-and-destinations
 
-## Quick start
+## Browser-wallet deployment (recommended; no terminal or private key exports)
+
+Open **[FlowPilot Deploy Wizard](https://flowpilot-omni.vercel.app/deploy.html)** and connect a **new testnet-only wallet**. Verify that the GitHub Actions compiler-artifact publishing workflow has completed, then approve the guided transactions in order:
+
+1. Deploy `PaymentGate` on Base Sepolia and `MockUSD` on Unichain Sepolia.
+2. Deploy `OmniRelay` on Lasna and `PayoutVault` on Unichain Sepolia.
+3. Set the destination once on Lasna; the vault authenticates the official Unichain callback proxy and your new relay.
+4. Deposit **testnet lREACT** through Lasna's system `depositTo(relay)` and **testnet ETH** through Unichain's official callback proxy `depositTo(vault)`.
+5. Download the deployment record, return to the dashboard, and complete the live fUSD-faucet → escrow → Base payment → Reactive callback test.
+
+The wizard never requests private keys and saves the deployment record only in the browser. **A user still must confirm each signed transaction in their own wallet and fund its testnet account.** The produced addresses and deployment transactions alone are *not* evidence of a successful callback. A verified origin transaction, Reactive transaction, and destination callback are still mandatory for submission.
+
+The Reactive docs describe Lasna lREACT faucet options, including conversion from Base Sepolia ETH: https://dev.reactive.network/reactive-mainnet
+
+## Quick start (CLI alternative)
 
 Prerequisites: [Foundry](https://getfoundry.sh/), Git, Python 3, a browser wallet, **testnet-only** ETH on Base and Unichain, and testnet REACT on Lasna.
 
 ```bash
-# Clone the published repository
-git clone https://github.com/samertall/flowpilot-omni.git
-cd flowpilot-omni
+# In this repository extracted from the ZIP
+git init
 forge install foundry-rs/forge-std --no-commit
 forge install Reactive-Network/reactive-lib-omni --no-commit
 forge build
@@ -121,15 +134,10 @@ node scripts/verify-evidence.mjs \
 
 Replace each placeholder with the complete 66-character transaction hash, without spaces. The verifier reads only RPCs, checks the system's `CallbackRequest` payload, recomputes the event proof, validates the callback's payout event and final escrow state, and writes `docs/VERIFIED_EVIDENCE.json` and `.md` **only after all checks pass**. If anything mismatches, it exits nonzero and does not label the run verified.
 
-See [`docs/LIVE_EXECUTION_CHECKLIST.md`](docs/LIVE_EXECUTION_CHECKLIST.md) for detailed instructions. Testnet funding and confirmation are manual, intentional wallet actions.
+See [`docs/LIVE_EXECUTION_CHECKLIST.md`](docs/LIVE_EXECUTION_CHECKLIST.md) for detailed instructions, or use the browser-wallet wizard at `app/deploy.html`. Testnet funding and confirmation are manual, intentional wallet actions.
 
 
 ## Preview assets
-
-**Live interface:** https://flowpilot-omni.vercel.app (connects to contracts only after real deployment addresses are configured).
-
-![FlowPilot desktop UI](docs/preview-dashboard-desktop.png)
-
 
 - [`docs/preview-dashboard-desktop.png`](docs/preview-dashboard-desktop.png): desktop UI capture.
 - [`docs/preview-dashboard-mobile.png`](docs/preview-dashboard-mobile.png): mobile UI capture.
