@@ -48,7 +48,7 @@ A freelancer, marketplace operator or small team often wants a simple if-then pa
 | Reactive engine | Lasna Omni | 5318007 | `OmniRelay.sol` |
 | Destination | Unichain Sepolia | 1301 | `PayoutVault.sol` |
 | Test-only ERC20 | Unichain Sepolia | 1301 | `MockUSD.sol` |
-| Unichain Callback Proxy | Unichain Sepolia | 1301 | `0x775c9B990ADe401060B78D0e98684eEf8d2466C1` |
+| Unichain Callback Proxy | Unichain Sepolia | 1301 | `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4` |
 | Lasna System Contract | Lasna Omni | 5318007 | `0x8888888888888888888888888888888888888888` |
 
 Official docs: https://dev.reactive.network/reactive-contracts and https://dev.reactive.network/origins-and-destinations
