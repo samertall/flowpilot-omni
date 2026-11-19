@@ -134,8 +134,9 @@ contract FlowPilotTest is Test {
     }
 
     function testOnlySystemCanInvokeReact() public {
+        IReactive.LogRecord memory r = _logRecord(MIN_PAYMENT, merchant, RULE);
         vm.expectRevert();
-        relay.react(_logRecord(MIN_PAYMENT, merchant, RULE));
+        relay.react(r);
     }
 
     function testOnlyProxyCanCallVault() public {
