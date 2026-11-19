@@ -1,6 +1,9 @@
 name: FlowPilot — Cloud Testnet Deployment & Evidence
 
 on:
+  push:
+    branches: [main]
+    paths: ['.flowpilot/trigger.json']
   workflow_dispatch:
     inputs:
       phase:
@@ -32,12 +35,11 @@ concurrency:
 
 jobs:
   cloud:
-    name: ${{ inputs.phase }} (testnet only)
-    if: ${{ inputs.phase == 'preflight' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
+    name: Cloud testnet (approved operation)
+    if: ${{ github.event_name == 'push' || inputs.phase == 'preflight' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      CONFIRM_TESTNET_BROADCAST: ${{ inputs.confirm_testnet_broadcast }}
       BASE_RPC_URL: https://sepolia.base.org
       LASNA_RPC_URL: https://lasna-omni-rpc.rnk.dev/
       UNI_RPC_URL: https://sepolia.unichain.org
@@ -50,17 +52,40 @@ jobs:
         with:
           node-version: '22'
       - uses: foundry-rs/foundry-toolchain@v1
-      - name: Confirm safe network and secret are configured
+      - id: approval
+        name: Resolve approved testnet phase (manual or explicit trigger file)
         shell: bash
+        env:
+          WORKFLOW_PHASE: ${{ inputs.phase }}
+          WORKFLOW_CONFIRM: ${{ inputs.confirm_testnet_broadcast }}
         run: |
           set -euo pipefail
-          case "${{ inputs.phase }}" in preflight|verify) : ;; *) test "$CONFIRM_TESTNET_BROADCAST" = yes ;; esac
+          python3 - <<'PYCODE'
+          import json, os
+          event=os.environ.get('GITHUB_EVENT_NAME')
+          if event=='push':
+              with open('.flowpilot/trigger.json') as f: request=json.load(f)
+              phase=request.get('phase','')
+              confirm=request.get('confirm_testnet_broadcast','no')
+          else:
+              phase=os.environ.get('WORKFLOW_PHASE','')
+              confirm=os.environ.get('WORKFLOW_CONFIRM','no')
+          if phase not in {'preflight','faucet','deploy','demo','verify'}:
+              raise SystemExit('Invalid cloud testnet phase')
+          if phase in {'faucet','deploy','demo'} and confirm!='yes':
+              raise SystemExit('On-chain transactions require explicit testnet approval')
+          if confirm not in {'yes','no'}: raise SystemExit('Invalid approval value')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write(f'phase={phase}\n')
+              f.write(f'confirm={confirm}\n')
+          print(f'Authorized workflow phase: {phase}; testnet broadcasting: {confirm}')
+          PYCODE
           node --check scripts/cloud-runner.mjs
           python3 -m json.tool app/deployments.json >/dev/null
       - name: Install dependencies with lifecycle scripts disabled
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Compile and test the contracts (before signing)
-        if: ${{ inputs.phase == 'deploy' }}
+        if: ${{ steps.approval.outputs.phase == 'deploy' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -69,25 +94,26 @@ jobs:
           forge build
           forge test -q
       - id: runcloud
-        name: Execute ${{ inputs.phase }} in the cloud
+        name: Execute approved phase in the cloud
         shell: bash
         env:
           FLOWPILOT_TESTNET_PRIVATE_KEY: ${{ secrets.FLOWPILOT_TESTNET_PRIVATE_KEY }}
+          CONFIRM_TESTNET_BROADCAST: ${{ steps.approval.outputs.confirm }}
         run: |
           set +e
-          node scripts/cloud-runner.mjs '${{ inputs.phase }}'
+          node scripts/cloud-runner.mjs '${{ steps.approval.outputs.phase }}'
           code=$?
           echo "phase_exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
       - name: Render evidence-backed 72-second video only after verified callback
-        if: ${{ (inputs.phase == 'demo' || inputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
+        if: ${{ (steps.approval.outputs.phase == 'demo' || steps.approval.outputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
         shell: bash
         run: |
           set -euo pipefail
           python3 -m pip install 'Pillow==12.0.0'
           python3 scripts/build-evidence-video.py
       - name: Upload proven execution video
-        if: ${{ (inputs.phase == 'demo' || inputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
+        if: ${{ (steps.approval.outputs.phase == 'demo' || steps.approval.outputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
         uses: actions/upload-artifact@v4
         with:
           name: flowpilot-verified-video-${{ github.run_id }}
@@ -97,7 +123,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: flowpilot-${{ inputs.phase }}-${{ github.run_id }}
+          name: flowpilot-${{ steps.approval.outputs.phase }}-${{ github.run_id }}
           path: |
             docs/CLOUD_PREFLIGHT.json
             docs/CLOUD_FAUCET.json
@@ -107,7 +133,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
       - name: Publish public contract addresses and on-chain evidence
-        if: ${{ inputs.phase != 'preflight' && steps.runcloud.outputs.phase_exit_code != '' }}
+        if: ${{ steps.approval.outputs.phase != 'preflight' && steps.runcloud.outputs.phase_exit_code != '' }}
         shell: bash
         run: |
           set -euo pipefail
