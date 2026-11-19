@@ -71,8 +71,11 @@ async function switchChain(key) {
 }
 async function getArtifact(name) {
   if (ARTIFACTS[name]) return ARTIFACTS[name];
-  const response = await fetch(`./artifacts/${name}.json`, { cache: 'no-store' });
-  if (!response.ok) throw Error(`Compiler artifact ${name} is unavailable (HTTP ${response.status}). The GitHub Actions publishing job must complete first.`);
+  let response = await fetch(`./artifacts/${name}.json`, { cache: 'no-store' });
+  // On limited hosting plans the web app can update before its generated artifact files.
+  // Fallback to the same GitHub-Actions-built public compiler artifact in the repository.
+  if (!response.ok) response = await fetch(`https://raw.githubusercontent.com/samertall/flowpilot-omni/main/app/artifacts/${name}.json`, { cache: 'no-store' });
+  if (!response.ok) throw Error(`Compiler artifact ${name} unavailable (HTTP ${response.status}); check GitHub Actions and app/artifacts.`);
   const item = await response.json();
   if (!Array.isArray(item.abi) || !/^0x(?:[0-9a-f]{2})+$/i.test(item.bytecode) || item.contractName !== name) throw Error(`Artifact ${name} is invalid or contains unlinked bytecode.`);
   ARTIFACTS[name] = item;
