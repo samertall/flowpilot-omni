@@ -17,11 +17,11 @@ Everything is **testnet only**; no real-money tokens are required.
 
 | Network | Chain ID | Native testnet gas | Suggested starting balance for this one demo |
 | --- | --- | --- | --- |
-| Base Sepolia | 84532 | Testnet ETH | 0.01 ETH |
+| Base Sepolia | 84532 | Testnet ETH | 0.03 ETH if using the optional Lasna faucet; otherwise 0.01 ETH |
 | Reactive Lasna Omni | 5318007 | Testnet lREACT | 0.2 lREACT or more |
 | Unichain Sepolia | 1301 | Testnet ETH | 0.01 ETH |
 
-**Testnet funding varies with faucet availability and actual fees.** Minimum checks in the script are 0.003 Base ETH, 0.15 lREACT and 0.006 Unichain ETH. If the wallet is insufficiently funded, the deploy phase aborts *before deploying anything*.
+**Testnet funding varies with faucet availability and actual fees.** The optional `faucet` phase spends exactly `0.01` Base Sepolia TESTNET ETH and needs at least `0.02` Base Sepolia test ETH beforehand. Minimum checks in the script are 0.003 Base ETH, 0.15 lREACT and 0.006 Unichain ETH. If the wallet is insufficiently funded, the deploy phase aborts *before deploying anything*.
 
 For Lasna lREACT, the official Reactive docs describe the Base Sepolia faucet at `0x2afaFD298b23b62760711756088F75B7409f5967` and the `request(address)` function; the listed exchange rate is 1 testnet ETH → 100 testnet lREACT. See https://dev.reactive.network/reactive-mainnet. **Verify the faucet address on the official page before sending testnet funds**. Do not send mainnet ETH to a testnet faucet.
 
