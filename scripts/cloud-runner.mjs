@@ -58,9 +58,30 @@ const explorer = {
   lasna: hash => `https://lasna-omni.reactscan.net/tx/${hash}`,
   uni: hash => `https://sepolia.uniscan.xyz/tx/${hash}`,
 };
+// Bound each preflight network request: a slow RPC must not stall GitHub Actions.
+async function readRpc(chain, method, params = [], timeoutMs = 12000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(NETWORKS[chain].url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+      signal: controller.signal
+    });
+    if (!response.ok) throw Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if (payload.error || payload.result == null) throw Error(JSON.stringify(payload.error || 'Empty JSON-RPC result'));
+    return payload.result;
+  } catch (err) {
+    throw Error(`Read-only RPC check failed on ${chain} for ${method}: ${err.message}`);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 async function safeNetworks() {
   for (const [name,net] of Object.entries(NETWORKS)) {
-    const reported = BigInt(await providers[name].send('eth_chainId', []));
+    const reported = BigInt(await readRpc(name, 'eth_chainId'));
     if (reported !== BigInt(net.id)) throw Error(`Unsafe RPC ${name}: expected chain ${net.id}, got ${reported}. No transaction sent.`);
   }
 }
@@ -74,7 +95,7 @@ const atom = (label, a) => { console.log(`${label} ${a}`); return a; };
 async function checkFunds(verbose=true) {
   const out = {};
   for(const [chain,net] of Object.entries(NETWORKS)) {
-    out[chain] = await providers[chain].getBalance(account);
+    out[chain] = BigInt(await readRpc(chain, 'eth_getBalance', [account, 'latest']));
     if(verbose) console.log(`${net.symbol} on ${chain} (${net.id}): ${formatEther(out[chain])}`);
   }
   return out;
