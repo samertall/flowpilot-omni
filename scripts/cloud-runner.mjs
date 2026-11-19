@@ -14,7 +14,7 @@ import {
 
 const root = resolve(import.meta.dirname, '..');
 const phase = process.argv[2];
-const supported = ['preflight', 'deploy', 'demo', 'verify'];
+const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify'];
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
@@ -86,6 +86,25 @@ async function preflight() {
   const summary = { account, utc: new Date().toISOString(), networks: Object.fromEntries(Object.entries(NETWORKS).map(([key,net]) => [key,{chainId:net.id,symbol:net.symbol,balance:formatEther(balances[key])}])) };
   json(resolve(root,'docs','CLOUD_PREFLIGHT.json'),summary);
   console.log('Funds are TESTNET ONLY. Base Sepolia ETH, Lasna lREACT and Unichain Sepolia ETH are needed for a complete run.');
+}
+async function faucet() {
+  if (process.env.CONFIRM_TESTNET_BROADCAST !== 'yes') throw Error('Faucet requires confirm_testnet_broadcast=yes');
+  await safeNetworks();
+  const before=await checkFunds();
+  const amount=parseEther('0.01');
+  if(before.base < parseEther('0.02'))throw Error('Need at least 0.02 Base Sepolia TESTNET ETH for the official Lasna faucet and later deployment.');
+  console.log(`Requesting testnet lREACT from official Base Sepolia faucet for ${account}; amount ${formatEther(amount)} TESTNET ETH.`);
+  const faucet=new Contract('0x2afaFD298b23b62760711756088F75B7409f5967', ['function request(address) external payable'], signers.base);
+  const rec=await receipt(await faucet.request(account,{value:amount}),'base');
+  const state={status:'FAUCET_REQUEST_CONFIRMED_LASNA_DELIVERY_PENDING',deployer:account,sourceTxHash:rec.hash,explorer:explorer.base(rec.hash),testnetETHSent:formatEther(amount),lasnaBalanceBefore:formatEther(before.lasna),requestedAt:new Date().toISOString()};
+  const file=resolve(root,'docs','CLOUD_FAUCET.json');
+  json(file,state);
+  for(let i=0;i<20;i++){
+    await sleep(15000);
+    const balance=await providers.lasna.getBalance(account);
+    if(balance>before.lasna){state.status='LASNA_FAUCET_RECEIVED';state.lasnaBalanceAfter=formatEther(balance);state.receivedAt=new Date().toISOString();json(file,state);console.log(`Lasna lREACT received: ${state.lasnaBalanceAfter}`);return;}
+  }
+  throw Error('Faucet tx confirmed on Base but Lasna delivery not observed within five minutes. Do NOT repeat request without checking explorer/funding first.');
 }
 async function deploy() {
   if(process.env.CONFIRM_TESTNET_BROADCAST !== 'yes') throw Error('Deployment requires workflow input confirm_testnet_broadcast=yes');
@@ -237,6 +256,7 @@ async function verify() {
 }
 try {
   if(phase==='preflight') await preflight();
+  if(phase==='faucet') await faucet();
   if(phase==='deploy') await deploy();
   if(phase==='demo') await demo();
   if(phase==='verify') await verify();
