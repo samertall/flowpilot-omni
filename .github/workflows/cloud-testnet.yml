@@ -10,6 +10,7 @@ on:
         default: preflight
         options:
           - preflight
+          - faucet
           - deploy
           - demo
           - verify
@@ -78,6 +79,20 @@ jobs:
           code=$?
           echo "phase_exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
+      - name: Render evidence-backed 72-second video only after verified callback
+        if: ${{ (inputs.phase == 'demo' || inputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'Pillow==12.0.0'
+          python3 scripts/build-evidence-video.py
+      - name: Upload proven execution video
+        if: ${{ (inputs.phase == 'demo' || inputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowpilot-verified-video-${{ github.run_id }}
+          path: docs/flowpilot-verified-demo.mp4
+          retention-days: 90
       - name: Upload public receipts and partial progress (even when pending)
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,6 +100,7 @@ jobs:
           name: flowpilot-${{ inputs.phase }}-${{ github.run_id }}
           path: |
             docs/CLOUD_PREFLIGHT.json
+            docs/CLOUD_FAUCET.json
             deployments/CLOUD_DEPLOY_PROGRESS.json
             deployments/lasna.json
             docs/CLOUD_EVIDENCE.json
@@ -99,6 +115,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           test ! -f deployments/lasna.json || git add deployments/lasna.json app/deployments.json
           test ! -f docs/CLOUD_EVIDENCE.json || git add docs/CLOUD_EVIDENCE.json
+          test ! -f docs/flowpilot-verified-demo.mp4 || git add docs/flowpilot-verified-demo.mp4
           if ! git diff --cached --quiet; then
             git commit -m 'testnet: record observed deployment and callback evidence [skip ci]'
             git push origin HEAD:main
