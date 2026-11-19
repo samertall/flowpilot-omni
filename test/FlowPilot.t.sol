@@ -71,7 +71,7 @@ contract FlowPilotTest is Test {
         r.topic2 = uint256(uint160(address(this)));
         r.topic3 = uint256(uint160(payee));
         r.data = abi.encode(amount);
-        r.opCode = 3;
+        r.opCode = 4;
         r.txHash = uint256(keccak256("base-transaction-1"));
         r.logIndex = 0;
     }
@@ -199,7 +199,7 @@ contract FlowPilotTest is Test {
 
     function testIgnoresWrongTopicCount() public {
         IReactive.LogRecord memory r = _logRecord(MIN_PAYMENT, merchant, RULE);
-        r.opCode = 4;
+        r.opCode = 3;
         _react(r);
         assertEq(system.requestCount(), 0);
     }
