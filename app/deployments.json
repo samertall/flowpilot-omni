@@ -2,6 +2,6 @@
   "network": "Lasna Omni testnet",
   "chainId": 5318007,
   "baseSepolia": { "chainId": 84532, "paymentGate": "" },
-  "unichainSepolia": { "chainId": 1301, "mockUSD": "", "payoutVault": "", "callbackProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1" },
+  "unichainSepolia": { "chainId": 1301, "mockUSD": "", "payoutVault": "", "callbackProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4" },
   "lasna": { "chainId": 5318007, "omniRelay": "" }
 }
