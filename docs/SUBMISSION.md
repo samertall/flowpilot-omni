@@ -35,7 +35,7 @@ MockUSD address (Unichain Sepolia): PENDING
 Origin event transaction hash: PENDING
 Reactive transaction hash: PENDING
 Destination callback transaction hash: PENDING
-Demo video (< 3 min): PENDING
+Demo video (< 3 min): PENDING — the introduction clip is not a live callback demo
 
 ## Verified build and demo status
 GitHub Actions: https://github.com/samertall/flowpilot-omni/actions/runs/44510475344 — 18/18 Foundry tests passing.
