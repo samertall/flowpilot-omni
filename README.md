@@ -53,7 +53,13 @@ A freelancer, marketplace operator or small team often wants a simple if-then pa
 
 Official docs: https://dev.reactive.network/reactive-contracts and https://dev.reactive.network/origins-and-destinations
 
-## Browser-wallet deployment (recommended; no terminal or private key exports)
+## IMPORTANT: Hosted deployment wizard safety check
+
+**Do not deploy from the hosted wizard if it still displays an outdated callback proxy.** The official Reactive chain directory lists the Unichain Sepolia Callback Proxy as `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4`. Vercel has temporarily continued to serve an earlier `deploy.js` with a different proxy because of its free deployment limit. Before signing anything, verify the code at `https://flowpilot-omni.vercel.app/deploy.js` contains the official proxy and the `lasna-omni-rpc.rnk.dev` endpoint. Until both are present, use the **corrected local repository** with `python3 -m http.server --directory app 8080`, then open `http://localhost:8080/deploy.html`. This local version contains the corrected configuration and fetches GitHub's compiled artifact files as a fallback.
+
+Official reference: https://dev.reactive.network/origins-and-destinations#testnet-chains
+
+## Browser-wallet deployment (after safety check; no private key exports)
 
 Open **[FlowPilot Deploy Wizard](https://flowpilot-omni.vercel.app/deploy.html)** and connect a **new testnet-only wallet**. Verify that the GitHub Actions compiler-artifact publishing workflow has completed, then approve the guided transactions in order:
 
