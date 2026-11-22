@@ -41,7 +41,7 @@ jobs:
     timeout-minutes: 25
     env:
       BASE_RPC_URL: https://sepolia.base.org
-      LASNA_RPC_URL: https://lasna-omni-rpc.rnk.dev/
+      LASNA_RPC_URL: https://lasna-rpc.rnk.dev/
       UNI_RPC_URL: https://sepolia.unichain.org
       CLOUD_PROOF_TIMEOUT_SECONDS: '480'
     steps:
