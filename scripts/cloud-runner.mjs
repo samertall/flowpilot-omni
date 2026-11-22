@@ -22,7 +22,7 @@ const ADDRS = {
 };
 const NETWORKS = {
   base: { id: 84532, symbol: 'ETH', url: process.env.BASE_RPC_URL || 'https://sepolia.base.org' },
-  lasna: { id: 5318007, symbol: 'lREACT', url: process.env.LASNA_RPC_URL || 'https://lasna-omni-rpc.rnk.dev/' },
+  lasna: { id: 5318007, symbol: 'lREACT', url: process.env.LASNA_RPC_URL || 'https://lasna-rpc.rnk.dev/' },
   uni: { id: 1301, symbol: 'ETH', url: process.env.UNI_RPC_URL || 'https://sepolia.unichain.org' },
 };
 const outPath = resolve(root, 'deployments', 'lasna.json');
