@@ -4,7 +4,7 @@ import { ethers } from 'https://esm.sh/ethers@6.15.0';
 const $ = (id) => document.getElementById(id);
 const CHAINS = {
   base: { id: 84532, hex: '0x14a34', name: 'Base Sepolia', rpc: 'https://sepolia.base.org', explorer: 'https://sepolia.basescan.org' },
-  lasna: { id: 5318007, hex: '0x512577', name: 'Reactive Lasna', rpc: 'https://lasna-omni-rpc.rnk.dev/', explorer: 'https://lasna-omni.reactscan.net' },
+  lasna: { id: 5318007, hex: '0x512577', name: 'Reactive Lasna', rpc: 'https://lasna-rpc.rnk.dev/', explorer: 'https://lasna-omni.reactscan.net' },
   uni: { id: 1301, hex: '0x515', name: 'Unichain Sepolia', rpc: 'https://sepolia.unichain.org', explorer: 'https://sepolia.uniscan.xyz' },
 };
 const ABI = {
