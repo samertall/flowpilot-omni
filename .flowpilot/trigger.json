@@ -1,7 +1,6 @@
 {
   "phase": "preflight",
   "confirm_testnet_broadcast": "no",
-  "requestedBy": "user-confirmed GitHub secret setup",
-  "purpose": "Read-only wallet network and balance check",
-  "requestedAt": "2026-11-19T14:33:00+03:00"
+  "note": "Read-only network and balances after RPC timeout fix",
+  "requestedDate": "2026-11-22"
 }
