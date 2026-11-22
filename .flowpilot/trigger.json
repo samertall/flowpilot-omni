@@ -1,6 +1,7 @@
 {
   "phase": "preflight",
   "confirm_testnet_broadcast": "no",
-  "note": "Read-only network and balances after RPC timeout fix",
-  "requestedDate": "2026-11-22"
+  "note": "Compare Reactive Lasna documented alternative RPC and check balances; no transactions",
+  "requestedDate": "2026-11-22",
+  "rpcProbe": "lasna-rpc.rnk.dev"
 }
