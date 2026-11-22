@@ -1,9 +1,7 @@
 {
-  "phase": "faucet",
-  "confirm_testnet_broadcast": "yes",
-  "network": "Base Sepolia -> Reactive Lasna",
-  "maxTestnetETH": "0.0018",
-  "purpose": "request 0.18 testnet lREACT for FlowPilot while preserving Base deploy gas",
-  "requestedAt": "2026-11-22",
-  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A"
+  "phase": "preflight",
+  "confirm_testnet_broadcast": "no",
+  "note": "Verify Base gas remaining, 0.18 lREACT faucet credit and Unichain funding after successful Reactive faucet tx",
+  "faucetTx": "0xc9f33c2ec2d2370154f84ad905338593c8baa5f16104b4912dc22ecb186cf5f9",
+  "date": "2026-11-22"
 }
