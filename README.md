@@ -55,7 +55,7 @@ Official docs: https://dev.reactive.network/reactive-contracts and https://dev.r
 
 ## IMPORTANT: Hosted deployment wizard safety check
 
-**Do not deploy from the hosted wizard if it still displays an outdated callback proxy.** The official Reactive chain directory lists the Unichain Sepolia Callback Proxy as `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4`. Vercel has temporarily continued to serve an earlier `deploy.js` with a different proxy because of its free deployment limit. Before signing anything, verify the code at `https://flowpilot-omni.vercel.app/deploy.js` contains the official proxy and the `lasna-omni-rpc.rnk.dev` endpoint. Until both are present, use the **corrected local repository** with `python3 -m http.server --directory app 8080`, then open `http://localhost:8080/deploy.html`. This local version contains the corrected configuration and fetches GitHub's compiled artifact files as a fallback.
+**Deployment safety check (verified November 22, 2026):** The hosted wizard now contains the official Unichain Sepolia callback proxy `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4` and the working Lasna RPC `https://lasna-rpc.rnk.dev/`. The cloud GitHub Actions workflow is recommended when local tooling is unavailable. Wallet: `0x24E895cBE3c427E08A7A013553813933cffeB68A`. Current balances after the verified Reactive faucet: approximately `0.0031998464 Base Sepolia test ETH`, `0.18 lREACT`, and `0 Unichain Sepolia test ETH`. **Do not deploy until the Unichain wallet has testnet gas.**
 
 Official reference: https://dev.reactive.network/origins-and-destinations#testnet-chains
 
