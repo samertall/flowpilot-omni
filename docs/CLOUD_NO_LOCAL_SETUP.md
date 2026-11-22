@@ -1,5 +1,7 @@
 # FlowPilot — cloud-only testnet deployment (no laptop tooling)
 
+**November 22, 2026 update:** The Reactive lREACT faucet operation already succeeded for the public FlowPilot wallet; do NOT repeat the faucet transfer. Base Sepolia balance after the transaction is 0.003199846417999908 test ETH, Lasna balance is 0.18 lREACT, and Unichain Sepolia remains unfunded. See `docs/LASNA_FAUCET_RECEIPT.md` for the verified transaction. Use the [Alchemy Unichain Sepolia faucet](https://www.alchemy.com/faucets/unichain-sepolia) to claim test ETH. Its Cloudflare human-verification checkbox requires user interaction; no Alchemy account is required according to the page.
+
 The code runs on **GitHub Actions**, not on your computer. No terminal, local Foundry installation or wallet extension is required to deploy. GitHub Actions sends transactions using a **brand-new, testnet-only account** that you create and explicitly authorize.
 
 **Do not paste any private key or seed phrase into ChatGPT, a GitHub issue, pull request, workflow input, or repository file.** A repository **Actions secret** is encrypted and is only exposed to a workflow at runtime. Even so, repository administrators and workflows with secret access must be trusted, so this must be a disposable wallet with **no mainnet funds, NFTs, approvals, or personal holdings**. Never reuse your main wallet.
@@ -20,7 +22,7 @@ Faucet availability and eligibility may vary. Avoid bypassing CAPTCHA, account c
 1. Create a fresh wallet dedicated **exclusively** to this testnet demo. Keep its seed phrase/private key outside ChatGPT and public code.
 2. In [Repository settings → Actions secrets](https://github.com/samertall/flowpilot-omni/settings/secrets/actions), select **New repository secret**. Name it exactly `FLOWPILOT_TESTNET_PRIVATE_KEY` and put the throwaway wallet private key in the **secret's Value field**. This is the only place the key is entered; don't send it to the assistant.
 3. In [Actions → FlowPilot — Cloud Testnet Deployment & Evidence](https://github.com/samertall/flowpilot-omni/actions/workflows/cloud-testnet.yml), choose **Run workflow**, then select `preflight` with `confirm_testnet_broadcast=no`. Read the log for the public wallet address and three chain balances. This phase does **not** send transactions.
-4. Fund this **public testnet address** with Base Sepolia and Unichain Sepolia test ETH. If you lack Lasna lREACT, run the optional `faucet` phase with `yes` to request it from the official Reactive Base Sepolia faucet using `0.01` Base Sepolia TESTNET ETH; the workflow records the faucet transaction. Then run `deploy` with `confirm_testnet_broadcast=yes`. After a successful run, choose `demo` with `yes` to automatically execute the on-chain demo. If callback delivery takes longer than the runner timeout, choose `verify` with `no` to resume **read-only verification** without paying again.
+4. Fund this **public testnet address** with Base Sepolia and Unichain Sepolia test ETH. If you lack Lasna lREACT, run the optional `faucet` phase with `yes` to request it from the official Reactive Base Sepolia faucet using `0.0018` Base Sepolia TESTNET ETH; the workflow records the faucet transaction. Then run `deploy` with `confirm_testnet_broadcast=yes`. After a successful run, choose `demo` with `yes` to automatically execute the on-chain demo. If callback delivery takes longer than the runner timeout, choose `verify` with `no` to resume **read-only verification** without paying again.
 
 ## Have ChatGPT trigger the GitHub jobs for you
 
@@ -38,7 +40,7 @@ Everything is **testnet only**; no real-money tokens are required.
 | Reactive Lasna Omni | 5318007 | Testnet lREACT | 0.2 lREACT or more |
 | Unichain Sepolia | 1301 | Testnet ETH | 0.01 ETH |
 
-**Testnet funding varies with faucet availability and actual fees.** The optional `faucet` phase spends exactly `0.01` Base Sepolia TESTNET ETH and requires at least `0.02` Base Sepolia test ETH beforehand. Minimum checks in the script are 0.003 Base ETH, 0.15 lREACT and 0.006 Unichain ETH. If the wallet is insufficiently funded, the deploy phase aborts *before deploying anything*.
+**Testnet funding varies with faucet availability and actual fees.** The optional `faucet` phase spends exactly `0.0018` Base Sepolia TESTNET ETH and requires at least `0.0049` Base Sepolia test ETH beforehand. Minimum checks in the script are 0.003 Base ETH, 0.15 lREACT and 0.006 Unichain ETH. If the wallet is insufficiently funded, the deploy phase aborts *before deploying anything*.
 
 For Lasna lREACT, the official Reactive docs describe the Base Sepolia faucet at `0x2afaFD298b23b62760711756088F75B7409f5967` and the `request(address)` function; the listed exchange rate is 1 testnet ETH → 100 testnet lREACT. See https://dev.reactive.network/reactive-mainnet. **Verify the faucet address on the official page before sending testnet funds**. Do not send mainnet ETH to a testnet faucet.
 
