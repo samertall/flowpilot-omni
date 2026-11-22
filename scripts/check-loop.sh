@@ -3,7 +3,7 @@
 set -euo pipefail
 if [[ -f .env ]]; then set -a; source .env; set +a; fi
 : "${BASE_RPC_URL:=https://sepolia.base.org}"
-: "${LASNA_RPC_URL:=https://lasna-omni-rpc.rnk.dev/}"
+: "${LASNA_RPC_URL:=https://lasna-rpc.rnk.dev/}"
 : "${UNI_RPC_URL:=https://sepolia.unichain.org}"
 : "${ORIGIN_TX:?Set ORIGIN_TX to a REAL Base Sepolia payment hash}"
 : "${RULE_ID:?Set RULE_ID to its bytes32 rule ID}"
