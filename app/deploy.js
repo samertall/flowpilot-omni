@@ -7,7 +7,7 @@ const CHAINS = {
   lasna: { id: 5318007, hex: '0x512577', name: 'Reactive Lasna', rpc: 'https://lasna-rpc.rnk.dev/', explorer: 'https://lasna-omni.reactscan.net', symbol: 'lREACT' },
   uni: { id: 1301, hex: '0x515', name: 'Unichain Sepolia', rpc: 'https://sepolia.unichain.org', explorer: 'https://sepolia.uniscan.xyz', symbol: 'ETH' },
 };
-const PROXY = '0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4';
+const PROXY = '0x775c9B990ADe401060B78D0e98684eEf8d2466C1';
 const SYSTEM = '0x8888888888888888888888888888888888888888';
 const STORAGE = 'flowpilot:wallet-deploy-v1';
 const STEPS = [
