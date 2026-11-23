@@ -197,7 +197,24 @@ async function deploy() {
       console.log('[RESUME] Reusing deployed '+name+' at '+previous.address);
       return new Contract(previous.address,abi,signers[chain]);
     }
-    const instance=await new ContractFactory(abi,bytecode,signers[chain]).deploy(...args);
+    const factory=new ContractFactory(abi,bytecode,signers[chain]);
+    let overrides={};
+    if(chain==='lasna'){
+      // Lasna's RPC quotes a high nominal gas price. Use explicit capped legacy fees;
+      // EIP-1559 autodetection can inflate the max-cost check and reject a funded wallet.
+      const unsigned=await factory.getDeployTransaction(...args);
+      const estimated=BigInt(await readRpc('lasna','eth_estimateGas',[{from:account,data:unsigned.data,value:'0x0'}],25000));
+      const gasPrice=BigInt(await readRpc('lasna','eth_gasPrice'));
+      const gasLimit=estimated*115n/100n+10000n;
+      if(gasLimit>1100000n)throw Error('Lasna estimated gas exceeded safe deployment limit: '+gasLimit);
+      const balance=await providers.lasna.getBalance(account);
+      const reserve=parseEther('0.075'); // relay deposit 0.06, configuration and safety reserve
+      if(gasLimit*gasPrice+reserve>balance)
+        throw Error('Lasna gas + reserved callbacks exceed testnet balance. Need '+formatEther(gasLimit*gasPrice+reserve)+' lREACT; have '+formatEther(balance));
+      overrides={gasLimit,gasPrice,type:0};
+      console.log('Lasna legacy deploy max cost:',formatEther(gasLimit*gasPrice),'lREACT, limit:',gasLimit.toString(),'gas, price:',gasPrice.toString(),'wei');
+    }
+    const instance=await factory.deploy(...args,overrides);
     const dep=instance.deploymentTransaction();
     if(!dep)throw Error('No deployment transaction for '+name);
     const record=await receipt(dep,chain);
