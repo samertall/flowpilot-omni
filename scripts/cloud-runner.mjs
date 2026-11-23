@@ -281,7 +281,7 @@ async function deploy() {
   progress.status='DEPLOYED_AND_FUNDED_DEMO_NOT_VERIFIED';progress.completedAt=new Date().toISOString();json(draftPath,progress);
   console.log('CONTRACTS DEPLOYED AND TESTNET ACCOUNTING FUNDED. This is not proof of a callback.');
 }
-const tokenAbi=['function faucet()','function approve(address,uint256) returns(bool)','function claimed(address) view returns(bool)','function balanceOf(address) view returns(uint256)'];
+const tokenAbi=['function faucet()','function approve(address,uint256) returns(bool)','function claimed(address) view returns(bool)','function balanceOf(address) view returns(uint256)','function allowance(address,address) view returns(uint256)'];
 const vaultAbi=['function createRule(bytes32,address,address,uint256,uint256,uint64)','function rules(bytes32) view returns(address sponsor,address merchant,address beneficiary,uint256 payoutAmount,uint256 minSourcePayment,uint64 expiry,uint8 state)','event PayoutExecuted(bytes32 indexed ruleId,bytes32 indexed proofId,address indexed beneficiary,address payer,uint256 amount)'];
 const gateAbi=['function pay(bytes32,address) payable','event PaymentMade(bytes32 indexed ruleId,address indexed payer,address indexed merchant,uint256 amount)'];
 const relayAbi=['event RelayRequested(bytes32 indexed ruleId,bytes32 indexed proofId,address payer,address merchant,uint256 amount)'];
@@ -389,8 +389,13 @@ async function demo() {
   if((await token.balanceOf(account))<payout)throw Error('Insufficient faucet demo fUSD');
   const ruleId=hexlify(randomBytes(32));
   const expiry=BigInt(Math.floor(Date.now()/1000)+24*3600);
-  const approve=await receipt(await token.approve(await vault.getAddress(),payout),'uni');
-  console.log(`Demo escrow approval: ${approve.hash}`);
+  const existingAllowance=await token.allowance(account,await vault.getAddress());
+  if(existingAllowance<payout){
+    const approve=await receipt(await token.approve(await vault.getAddress(),payout),'uni');
+    console.log(`Demo escrow approval: ${approve.hash}`);
+  }else{
+    console.log('Reusing previously confirmed 25 fUSD escrow allowance; no duplicate approval transaction.');
+  }
   const created=await receipt(await vault.createRule(ruleId,account,account,payout,payment,expiry),'uni');
   console.log(`Demo rule created: ${ruleId} in ${created.hash}`);
   const lasnaStart=await providers.lasna.getBlockNumber(),uniStart=await providers.uni.getBlockNumber();
