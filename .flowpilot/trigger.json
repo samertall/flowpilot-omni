@@ -1,7 +1,9 @@
 {
-  "phase": "inspect",
-  "confirm_testnet_broadcast": "no",
-  "purpose": "Read-only system getCallbacks for Lasna reactive transaction: check delivered/failed destination callback and errors",
-  "reactiveTx": "0x3ba118c10d5ba9a8a0e78ce3e151a1b8c2239c4ca371c9e28e4773107986f006",
+  "phase": "faucet",
+  "confirm_testnet_broadcast": "yes",
+  "amountBaseSepoliaTestETH": "0.001",
+  "expectedLasnaTestLReact": "0.1",
+  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "purpose": "Top up existing Reactive relay reserve for delivery without replaying Base payment",
   "date": "2026-11-23"
 }
