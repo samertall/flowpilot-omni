@@ -67,6 +67,15 @@ const receipt=async(tx,chain)=>{
   if(!r||r.status!==1)throw Error('Unconfirmed or reverted '+chain+' tx '+tx.hash);
   return r;
 };
+const waitForCode=async(chain,address)=>{
+  for(let attempt=0;attempt<9;attempt++){
+    const code=await providers[chain].getCode(address);
+    if(code!=='0x')return code;
+    console.log('Waiting for '+chain+' RPC to index confirmed deployed code at '+address);
+    await new Promise(r=>setTimeout(r,1250));
+  }
+  throw Error('Confirmed '+chain+' contract code still unavailable after RPC retries: '+address);
+};
 const validateStep=async(name,chain,addressRequired=false)=>{
   const step=progress.steps[name];if(!step)return null;
   if(step.chain!==chain)throw Error('Saved chain mismatch: '+name);
@@ -75,7 +84,7 @@ const validateStep=async(name,chain,addressRequired=false)=>{
   if(addressRequired){
     if(!step.address||assertAddress(r.contractAddress||ZeroAddress)!==assertAddress(step.address))
       throw Error('Saved creation address mismatch: '+name);
-    if((await providers[chain].getCode(step.address))==='0x')throw Error('Missing saved code: '+name);
+    await waitForCode(chain,step.address);
   }
   console.log('Reusing verified '+name+' '+step.hash);
   return step;
@@ -115,7 +124,7 @@ async function deployContract(stepName,contractName,chain,args){
   if(!dep)throw Error('No '+contractName+' creation transaction');
   const rec=await receipt(dep,chain);
   const addr=await obj.getAddress();
-  if((await providers[chain].getCode(addr))==='0x')throw Error(contractName+' has no runtime code');
+  await waitForCode(chain,addr);
   saveStep(stepName,chain,addr,rec);
   return obj;
 }
