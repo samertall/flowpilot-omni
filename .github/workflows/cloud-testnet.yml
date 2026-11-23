@@ -19,6 +19,7 @@ on:
           - topup
           - deploy
           - demo
+          - retry
           - verify
       confirm_testnet_broadcast:
         description: 'For deploy/demo only: enter yes to authorize testnet gas, deposits and demo payment'
@@ -73,9 +74,9 @@ jobs:
           else:
               phase=os.environ.get('WORKFLOW_PHASE','')
               confirm=os.environ.get('WORKFLOW_CONFIRM','no')
-          if phase not in {'preflight','diagnose','inspect','faucet','topup','deploy','demo','verify'}:
+          if phase not in {'preflight','diagnose','inspect','faucet','topup','deploy','demo','retry','verify'}:
               raise SystemExit('Invalid cloud testnet phase')
-          if phase in {'faucet','topup','deploy','demo'} and confirm!='yes':
+          if phase in {'faucet','topup','deploy','demo','retry'} and confirm!='yes':
               raise SystemExit('On-chain transactions require explicit testnet approval')
           if confirm not in {'yes','no'}: raise SystemExit('Invalid approval value')
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:
@@ -109,7 +110,7 @@ jobs:
           echo "phase_exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
       - name: Render evidence-backed 72-second video only after verified callback
-        if: ${{ (steps.approval.outputs.phase == 'demo' || steps.approval.outputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
+        if: ${{ (steps.approval.outputs.phase == 'demo' || steps.approval.outputs.phase == 'retry' || steps.approval.outputs.phase == 'verify') && steps.runcloud.outputs.phase_exit_code == '0' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -136,6 +137,7 @@ jobs:
             deployments/CLOUD_DEPLOY_PROGRESS.json
             deployments/lasna.json
             docs/CLOUD_EVIDENCE.json
+            docs/CLOUD_EVIDENCE_ATTEMPT1.json
           if-no-files-found: warn
           retention-days: 30
       - name: Publish public contract addresses and on-chain evidence
@@ -149,6 +151,7 @@ jobs:
           test ! -f docs/CLOUD_FAUCET.json || git add docs/CLOUD_FAUCET.json
           test ! -f docs/CLOUD_RELAY_TOPUP.json || git add docs/CLOUD_RELAY_TOPUP.json
           test ! -f docs/CLOUD_EVIDENCE.json || git add docs/CLOUD_EVIDENCE.json
+          test ! -f docs/CLOUD_EVIDENCE_ATTEMPT1.json || git add docs/CLOUD_EVIDENCE_ATTEMPT1.json
           test ! -f docs/flowpilot-verified-demo.mp4 || git add docs/flowpilot-verified-demo.mp4
           if ! git diff --cached --quiet; then
             git commit -m 'testnet: record observed deployment and callback evidence [skip ci]'
