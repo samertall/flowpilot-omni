@@ -1,4 +1,17 @@
-# FlowPilot: shipping checklist for Windows / Git Bash
+# FlowPilot — cloud-deployed and verified · November 23, 2026
+
+**The project has already been deployed on testnets through GitHub Actions; Windows, WSL, Foundry, and local Node are NOT required to complete the hackathon submission.** The previous instructions below are retained only for technical reproduction.
+
+- Real Base → Lasna → Unichain payout: **verified**.
+- New V2 OmniRelay + PayoutVault: **deployed and funded**.
+- Demo video: **[72-second verified walkthrough](flowpilot-verified-demo.mp4)**.
+- Full evidence: **[EVIDENCE.md](EVIDENCE.md)** and **[CLOUD_EVIDENCE.json](CLOUD_EVIDENCE.json)**.
+- Submission copy: **[SUBMISSION.md](SUBMISSION.md)**.
+- **Still required:** complete the authenticated DoraHacks BUIDL submission form and preserve its public submitted URL.
+
+---
+
+## Technical reproduction notes (optional)
 
 ## 1. Install and test
 
@@ -43,7 +56,7 @@ Open `http://localhost:8080`. Follow README's live sequence. Use the on-chain de
 - Public frontend preview: https://flowpilot-omni.vercel.app
 - Green Solidity/JS checks: https://github.com/samertall/flowpilot-omni/actions/runs/44510475344
 
-**Still needed:** deploy contracts on the three testnets; update `app/deployments.json` with **verified** addresses; push it to GitHub so the hosted preview becomes an interactive blockchain demo. Do not commit `.env` or any private key.
+**Completed on 2026-11-23:** All active deployment addresses and successful origin/reactive/callback receipts have been published. See `app/deployments.json` and `docs/CLOUD_EVIDENCE.json`. The only outstanding task is the DoraHacks account submission. Do not commit `.env` or any private key.
 
 ## 6. Publish demo and submit
 
