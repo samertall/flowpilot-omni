@@ -1,0 +1,15 @@
+{
+  "status": "IN_PROGRESS_NOT_VERIFIED",
+  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "previousProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4",
+  "newProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
+  "startedAt": "2026-11-23T07:38:36.298Z",
+  "steps": {
+    "OmniRelayV2": {
+      "chain": "lasna",
+      "address": "0x79e01302E20347911352c717c38129274C78d606",
+      "hash": "0x5b222d64e65ef2a85616431a05ec62f8d3c391414b25a95dfc0efd137acea4dd",
+      "block": 9039084
+    }
+  }
+}
