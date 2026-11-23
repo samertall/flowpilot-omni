@@ -56,7 +56,7 @@ echo "Unichain MockUSD: $TOKEN ($TOKEN_TX)"
 RELAY_OUTPUT=$(deploy src/OmniRelay.sol:OmniRelay "$LASNA_RPC_URL" --constructor-args 84532 "$PAYMENT" 1301)
 read -r RELAY RELAY_TX <<< "${RELAY_OUTPUT}"
 echo "Lasna OmniRelay: $RELAY ($RELAY_TX)"
-PROXY=0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4
+PROXY=0x775c9B990ADe401060B78D0e98684eEf8d2466C1
 VAULT_OUTPUT=$(deploy src/PayoutVault.sol:PayoutVault "$UNI_RPC_URL" --constructor-args "$TOKEN" "$PROXY" "$RELAY")
 read -r VAULT VAULT_TX <<< "${VAULT_OUTPUT}"
 echo "Unichain PayoutVault: $VAULT ($VAULT_TX)"
