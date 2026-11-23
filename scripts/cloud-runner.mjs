@@ -14,7 +14,7 @@ import {
 
 const root = resolve(import.meta.dirname, '..');
 const phase = process.argv[2];
-const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify', 'diagnose', 'inspect'];
+const supported = ['preflight', 'faucet', 'topup', 'deploy', 'demo', 'verify', 'diagnose', 'inspect'];
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
@@ -112,8 +112,8 @@ async function faucet() {
   if (process.env.CONFIRM_TESTNET_BROADCAST !== 'yes') throw Error('Faucet requires confirm_testnet_broadcast=yes');
   await safeNetworks();
   const before=await checkFunds();
-  const amount=parseEther('0.0018');
-  if(before.base < parseEther('0.0049'))throw Error('Need at least 0.0049 Base Sepolia TESTNET ETH to request 0.18 lREACT and leave deployment gas.');
+  const amount=parseEther('0.001');
+  if(before.base < parseEther('0.002'))throw Error('Need at least 0.002 Base Sepolia TESTNET ETH to request 0.1 lREACT while reserving Base gas.');
   console.log(`Requesting testnet lREACT from official Base Sepolia faucet for ${account}; amount ${formatEther(amount)} TESTNET ETH.`);
   const faucet=new Contract('0x2afaFD298b23b62760711756088F75B7409f5967', ['function request(address) external payable'], signers.base);
   const rec=await receipt(await faucet.request(account,{value:amount}),'base');
@@ -126,6 +126,44 @@ async function faucet() {
     if(balance>before.lasna){state.status='LASNA_FAUCET_RECEIVED';state.lasnaBalanceAfter=formatEther(balance);state.receivedAt=new Date().toISOString();json(file,state);console.log(`Lasna lREACT received: ${state.lasnaBalanceAfter}`);return;}
   }
   throw Error('Faucet tx confirmed on Base but Lasna delivery not observed within five minutes. Do NOT repeat request without checking explorer/funding first.');
+}
+async function topup() {
+  if(process.env.CONFIRM_TESTNET_BROADCAST!=='yes')throw Error('Relay top-up requires explicit testnet approval');
+  await safeNetworks();
+  const d=getDeployment();
+  if(getAddress(d.deployer)!==getAddress(account))throw Error('Top-up requires the original deployment wallet.');
+  const sys=new Contract(ADDRS.system,['function reserves(address) view returns(uint256)','function debts(address) view returns(uint256)','function depositTo(address) payable'],signers.lasna);
+  const relay=d.lasna.omniRelay;
+  const [reserveBefore,debtBefore]=await Promise.all([sys.reserves(relay),sys.debts(relay)]);
+  if(debtBefore>0n)throw Error('Reactive contract has outstanding debt; inspect before sending additional deposits.');
+  const targetReserve=parseEther('0.13');
+  if(reserveBefore>=targetReserve){
+    console.log('Target Lasna callback reserve already reached:',formatEther(reserveBefore));
+    return;
+  }
+  const amount=targetReserve-reserveBefore;
+  if(amount>parseEther('0.09'))throw Error('Top-up above 0.09 lREACT transaction cap');
+  const tx=await sys.depositTo.populateTransaction(relay,{value:amount});
+  const estimated=BigInt(await readRpc('lasna','eth_estimateGas',[{
+    from:account,to:ADDRS.system,data:tx.data,value:'0x'+amount.toString(16)
+  }],25000));
+  const gasPrice=BigInt(await readRpc('lasna','eth_gasPrice'));
+  const gasLimit=estimated*125n/100n+10000n;
+  if(gasLimit>300000n)throw Error('Unexpectedly high system topup gas estimate');
+  const walletBalance=await providers.lasna.getBalance(account);
+  const required=amount+gasLimit*gasPrice+parseEther('0.015');
+  if(walletBalance<required)throw Error('Insufficient testnet lREACT for top-up and gas reserve. Need '+formatEther(required)+'; have '+formatEther(walletBalance));
+  console.log('Depositing additional '+formatEther(amount)+' lREACT into relay '+relay+'; current reserve '+formatEther(reserveBefore));
+  const receiptObj=await receipt(await sys.depositTo(relay,{value:amount,gasPrice,gasLimit,type:0}),'lasna');
+  const reserveAfter=await sys.reserves(relay);
+  if(reserveAfter<targetReserve)throw Error('Topup tx confirmed but system reserve not credited; investigate before retrying');
+  json(resolve(root,'docs','CLOUD_RELAY_TOPUP.json'),{
+    status:'RELAY_RESERVE_TOPPED_UP_TESTNET_ONLY',wallet:account,relay,system:ADDRS.system,
+    depositTx:receiptObj.hash,explorer:explorer.lasna(receiptObj.hash),
+    reserveBefore:formatEther(reserveBefore),deposit:formatEther(amount),reserveAfter:formatEther(reserveAfter),
+    confirmedAt:new Date().toISOString()
+  });
+  console.log('CONFIRMED relay reserve after top-up:',formatEther(reserveAfter),'lREACT');
 }
 async function diagnose() {
   // Read-only: simulate the exact Lasna constructor deployment; never broadcast or sign.
@@ -462,6 +500,7 @@ try {
   if(phase==='inspect') await inspect();
   if(phase==='preflight') await preflight();
   if(phase==='faucet') await faucet();
+  if(phase==='topup') await topup();
   if(phase==='deploy') await deploy();
   if(phase==='demo') await demo();
   if(phase==='verify') await verify();
