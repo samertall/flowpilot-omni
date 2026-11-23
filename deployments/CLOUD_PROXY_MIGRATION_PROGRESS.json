@@ -10,6 +10,12 @@
       "address": "0x79e01302E20347911352c717c38129274C78d606",
       "hash": "0x5b222d64e65ef2a85616431a05ec62f8d3c391414b25a95dfc0efd137acea4dd",
       "block": 9039084
+    },
+    "PayoutVaultV2": {
+      "chain": "uni",
+      "address": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
+      "hash": "0xf866069f0187b97f8324426d5d37ece30dd53d3166cb927a0fd4e78a27bc2a25",
+      "block": 68567097
     }
   }
 }
