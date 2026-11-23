@@ -1,0 +1,12 @@
+{
+  "status": "RELAY_RESERVE_TOPPED_UP_TESTNET_ONLY",
+  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "relay": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
+  "system": "0x8888888888888888888888888888888888888888",
+  "depositTx": "0x545e0f2fa8ab07d1f07cfbc38b2cfbda859b8baa0e78eaa0c2fbca5ddd225b08",
+  "explorer": "https://lasna-omni.reactscan.net/tx/0x545e0f2fa8ab07d1f07cfbc38b2cfbda859b8baa0e78eaa0c2fbca5ddd225b08",
+  "reserveBefore": "0.0448036",
+  "deposit": "0.0851964",
+  "reserveAfter": "0.13",
+  "confirmedAt": "2026-11-23T07:22:02.205Z"
+}
