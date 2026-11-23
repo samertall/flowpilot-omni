@@ -1,7 +1,8 @@
 {
   "phase": "preflight",
   "confirm_testnet_broadcast": "no",
-  "note": "Verify Base gas remaining, 0.18 lREACT faucet credit and Unichain funding after successful Reactive faucet tx",
-  "faucetTx": "0xc9f33c2ec2d2370154f84ad905338593c8baa5f16104b4912dc22ecb186cf5f9",
-  "date": "2026-11-22"
+  "note": "Check Unichain testnet 0.01 ETH faucet distribution received November 23, 2026. Read-only funds check before any deployment",
+  "network": "Unichain Sepolia",
+  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "date": "2026-11-23"
 }
