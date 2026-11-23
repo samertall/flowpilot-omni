@@ -1,9 +1,12 @@
 {
-  "phase": "migrate",
+  "phase": "demo",
   "confirm_testnet_broadcast": "yes",
-  "reason": "Resume verified V2 relay+vault, set new destination and fund current official Unichain Sepolia callback proxy; avoid duplicate deploy",
-  "v2Relay": "0x79e01302E20347911352c717c38129274C78d606",
-  "v2Vault": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
-  "officialProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
-  "date": "2026-11-23"
+  "reason": "Single genuine payment-to-payout loop after successful callback proxy migration; original legacy attempts archived",
+  "account": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "activeProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
+  "maxOriginPaymentTestETH": "0.00005",
+  "testTokenPayout": "25 fUSD",
+  "deploymentV2": "deployments/lasna.json",
+  "date": "2026-11-23",
+  "noSecondPaymentWithoutProofReview": true
 }
