@@ -18,7 +18,7 @@ const supported = ['preflight', 'faucet', 'topup', 'deploy', 'demo', 'retry', 'v
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
-  proxy: '0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4',
+  proxy: '0x775c9B990ADe401060B78D0e98684eEf8d2466C1',
 };
 const NETWORKS = {
   base: { id: 84532, symbol: 'ETH', url: process.env.BASE_RPC_URL || 'https://sepolia.base.org' },
