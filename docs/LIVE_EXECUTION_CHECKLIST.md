@@ -45,7 +45,7 @@ npm run check
 | OmniRelay | Reactive Lasna | 5318007 |
 | PayoutVault | Unichain Sepolia | 1301 |
 
-The official Unichain callback proxy address is `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4`. The Lasna system is `0x8888888888888888888888888888888888888888`.
+The official Unichain callback proxy address is `0x775c9B990ADe401060B78D0e98684eEf8d2466C1`. The Lasna system is `0x8888888888888888888888888888888888888888`.
 
 ## Part C — Fund callback gas **explicitly**
 
