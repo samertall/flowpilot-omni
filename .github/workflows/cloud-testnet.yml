@@ -18,6 +18,7 @@ on:
           - faucet
           - topup
           - deploy
+          - migrate
           - demo
           - retry
           - verify
@@ -74,9 +75,9 @@ jobs:
           else:
               phase=os.environ.get('WORKFLOW_PHASE','')
               confirm=os.environ.get('WORKFLOW_CONFIRM','no')
-          if phase not in {'preflight','diagnose','inspect','faucet','topup','deploy','demo','retry','verify'}:
+          if phase not in {'preflight','diagnose','inspect','faucet','topup','deploy','migrate','demo','retry','verify'}:
               raise SystemExit('Invalid cloud testnet phase')
-          if phase in {'faucet','topup','deploy','demo','retry'} and confirm!='yes':
+          if phase in {'faucet','topup','deploy','migrate','demo','retry'} and confirm!='yes':
               raise SystemExit('On-chain transactions require explicit testnet approval')
           if confirm not in {'yes','no'}: raise SystemExit('Invalid approval value')
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:
@@ -85,11 +86,12 @@ jobs:
           print(f'Authorized workflow phase: {phase}; testnet broadcasting: {confirm}')
           PYCODE
           node --check scripts/cloud-runner.mjs
+          node --check scripts/migrate-callback-proxy.mjs
           python3 -m json.tool app/deployments.json >/dev/null
       - name: Install dependencies with lifecycle scripts disabled
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Compile and test the contracts (before signing)
-        if: ${{ steps.approval.outputs.phase == 'deploy' || steps.approval.outputs.phase == 'diagnose' }}
+        if: ${{ steps.approval.outputs.phase == 'deploy' || steps.approval.outputs.phase == 'diagnose' || steps.approval.outputs.phase == 'migrate' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -105,7 +107,11 @@ jobs:
           CONFIRM_TESTNET_BROADCAST: ${{ steps.approval.outputs.confirm }}
         run: |
           set +e
-          node scripts/cloud-runner.mjs '${{ steps.approval.outputs.phase }}'
+          if [ '${{ steps.approval.outputs.phase }}' = 'migrate' ]; then
+            node scripts/migrate-callback-proxy.mjs
+          else
+            node scripts/cloud-runner.mjs '${{ steps.approval.outputs.phase }}'
+          fi
           code=$?
           echo "phase_exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
@@ -135,9 +141,12 @@ jobs:
             docs/CLOUD_FAUCET.json
             docs/CLOUD_RELAY_TOPUP.json
             deployments/CLOUD_DEPLOY_PROGRESS.json
+            deployments/CLOUD_PROXY_MIGRATION_PROGRESS.json
+            deployments/lasna-legacy.json
             deployments/lasna.json
             docs/CLOUD_EVIDENCE.json
             docs/CLOUD_EVIDENCE_ATTEMPT1.json
+            docs/CLOUD_EVIDENCE_LEGACY_ATTEMPT2.json
           if-no-files-found: warn
           retention-days: 30
       - name: Publish public contract addresses and on-chain evidence
@@ -148,10 +157,14 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           test ! -f deployments/lasna.json || git add deployments/lasna.json app/deployments.json
+          test ! -f deployments/lasna-legacy.json || git add deployments/lasna-legacy.json
+          test ! -f deployments/CLOUD_PROXY_MIGRATION_PROGRESS.json || git add deployments/CLOUD_PROXY_MIGRATION_PROGRESS.json
           test ! -f docs/CLOUD_FAUCET.json || git add docs/CLOUD_FAUCET.json
           test ! -f docs/CLOUD_RELAY_TOPUP.json || git add docs/CLOUD_RELAY_TOPUP.json
           test ! -f docs/CLOUD_EVIDENCE.json || git add docs/CLOUD_EVIDENCE.json
           test ! -f docs/CLOUD_EVIDENCE_ATTEMPT1.json || git add docs/CLOUD_EVIDENCE_ATTEMPT1.json
+          test ! -f docs/CLOUD_EVIDENCE_LEGACY_ATTEMPT2.json || git add docs/CLOUD_EVIDENCE_LEGACY_ATTEMPT2.json
+          git add -u -- docs/CLOUD_EVIDENCE.json
           test ! -f docs/flowpilot-verified-demo.mp4 || git add docs/flowpilot-verified-demo.mp4
           if ! git diff --cached --quiet; then
             git commit -m 'testnet: record observed deployment and callback evidence [skip ci]'
