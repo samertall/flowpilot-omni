@@ -112,8 +112,8 @@ async function faucet() {
   if (process.env.CONFIRM_TESTNET_BROADCAST !== 'yes') throw Error('Faucet requires confirm_testnet_broadcast=yes');
   await safeNetworks();
   const before=await checkFunds();
-  const amount=parseEther('0.001');
-  if(before.base < parseEther('0.002'))throw Error('Need at least 0.002 Base Sepolia TESTNET ETH to request 0.1 lREACT while reserving Base gas.');
+  const amount=parseEther('0.0014');
+  if(before.base < parseEther('0.002'))throw Error('Need at least 0.002 Base Sepolia TESTNET ETH to request 0.14 lREACT while reserving Base testnet gas.');
   console.log(`Requesting testnet lREACT from official Base Sepolia faucet for ${account}; amount ${formatEther(amount)} TESTNET ETH.`);
   const faucet=new Contract('0x2afaFD298b23b62760711756088F75B7409f5967', ['function request(address) external payable'], signers.base);
   const rec=await receipt(await faucet.request(account,{value:amount}),'base');
