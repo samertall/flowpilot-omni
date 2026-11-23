@@ -1,31 +1,31 @@
 {
   "status": "PENDING_UNVERIFIED_CALLBACK",
-  "createdAt": "2026-11-23T07:06:06.101Z",
+  "createdAt": "2026-11-23T07:24:44.954Z",
   "track": "Set It and Forget It",
   "title": "FlowPilot — Autonomous Cross-Chain Automations",
   "deployer": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "ruleId": "0xb1b19d3a6574ef7a040be4b56f5f577f2966ab7a67493ef3c8c233a7975740b6",
-  "proofId": "0x3bd8466dca8c1f557b4a509d4aff0124b6252f8ba62c91e30ef76fc0255f1b87",
+  "ruleId": "0x5e7674a8f8dc5d19f7b573027e7353e55c1369e8f76bb8a0df78255c6735fbb3",
+  "proofId": "0x84ae93cb8818aa81626110e0a0dd8c954e76c27e45a1d324bdbd7ed5aba2c854",
   "beneficiary": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
   "merchant": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
   "sourceAmountETH": "0.00005",
   "payoutFUSD": "25.0",
-  "lasnaStartBlock": 9037225,
-  "uniStartBlock": 68565131,
+  "lasnaStartBlock": 9038285,
+  "uniStartBlock": 68566250,
   "transactions": {
     "createRule": {
-      "hash": "0xff8670e4607b0231c6801f795c42903079e86cbff453c555d29e4504b0354600",
-      "explorer": "https://sepolia.uniscan.xyz/tx/0xff8670e4607b0231c6801f795c42903079e86cbff453c555d29e4504b0354600"
+      "hash": "0xd86e49010e4d1945f63b897e98536763b3538c7540df69da63c6303fdecb7331",
+      "explorer": "https://sepolia.uniscan.xyz/tx/0xd86e49010e4d1945f63b897e98536763b3538c7540df69da63c6303fdecb7331"
     },
     "origin": {
-      "hash": "0xb8224d7e8a0de43e3ba624924a7e6919d8c4ca2e20b419d32391c2d2f6f420a3",
-      "explorer": "https://sepolia.basescan.org/tx/0xb8224d7e8a0de43e3ba624924a7e6919d8c4ca2e20b419d32391c2d2f6f420a3",
+      "hash": "0xd56b5e64fbce97e74851946b367f1cb8f89a572acfcce0110f8fcec1060c1b4b",
+      "explorer": "https://sepolia.basescan.org/tx/0xd56b5e64fbce97e74851946b367f1cb8f89a572acfcce0110f8fcec1060c1b4b",
       "logIndex": 1
     },
     "reactive": {
-      "hash": "0x3ba118c10d5ba9a8a0e78ce3e151a1b8c2239c4ca371c9e28e4773107986f006",
-      "explorer": "https://lasna-omni.reactscan.net/tx/0x3ba118c10d5ba9a8a0e78ce3e151a1b8c2239c4ca371c9e28e4773107986f006"
+      "hash": "0xe2920f8b99684c6f2e45113bcbd305f96b357d61b03cd93cce804dae742d1ca4",
+      "explorer": "https://lasna-omni.reactscan.net/tx/0xe2920f8b99684c6f2e45113bcbd305f96b357d61b03cd93cce804dae742d1ca4"
     }
   },
-  "lastCheckedAt": "2026-11-23T07:14:16.764Z"
+  "lastCheckedAt": "2026-11-23T07:32:58.274Z"
 }
