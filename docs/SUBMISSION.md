@@ -3,10 +3,11 @@
 **Project:** FlowPilot — Autonomous Cross-Chain Automations  
 **Track:** Set It and Forget It  
 **Tagline:** Set your rules once. Let the blockchain execute them automatically.  
-**Status:** Actual three-chain testnet callback **verified** on 2026-11-23. **DoraHacks form has not yet been submitted.**
+**Status:** Three-chain callback verified on 2026-11-23. Public DoraHacks BUIDL **created and independently confirmed** at https://dorahacks.io/build/51679/ under @almuktahiji. **Hackathon submission is NOT confirmed**: complete and submit the hackathon form. An attempt was blocked by video-link validation; the dedicated Video link was subsequently updated to a raw public MP4, but hackathon acceptance remains unverified.
 
 ## Public submission links
 
+- **DoraHacks BUIDL (public; submission not confirmed):** https://dorahacks.io/build/51679/
 - **GitHub (public, MIT):** https://github.com/samertall/flowpilot-omni
 - **Live web app:** https://flowpilot-omni.vercel.app
 - **72-second verified demonstration video:** https://github.com/samertall/flowpilot-omni/blob/main/docs/flowpilot-verified-demo.mp4
@@ -73,9 +74,29 @@ Solidity 0.8.29, Reactive Omni, Foundry, ethers.js v6, HTML/CSS/JavaScript, GitH
 - [x] Authenticated Unichain payout transaction and verified paid state
 - [x] Demo video under three minutes
 - [x] Hosted frontend
-- [ ] Submit the official DoraHacks BUIDL form under **Set It and Forget It**, using an authenticated DoraHacks account
+- [x] Create and verify public BUIDL #51679 under the intended @almuktahiji account
+- [ ] Complete the official DoraHacks hackathon form under **Set It and Forget It** and click **Submit for Review**
 - [ ] Capture the resulting submitted BUIDL URL
 
 **Organizer deadline:** December 5, 2026, at 20:00 UTC, as displayed by the official DoraHacks event page.
 
 **Disclosure:** This is a research and hackathon demonstration only, not audited or intended for mainnet assets. The product frontend is a prototype. Independent on-chain transaction evidence is available above.
+
+
+## Remaining DoraHacks form answers (as of November 23, 2026)
+
+Existing BUIDL: https://dorahacks.io/build/51679/ . **Do not create a duplicate BUIDL.** Open https://dorahacks.io/hackathon/reactive-omni-buildathon/detail and select **Submit Build**, choose **FlowPilot #51679**, choose the **Set It and Forget It** track, and fill the required organizer questions. The BUIDL has a 72-second demo via its Video link; confirm the organizer recognizes it before submission. The video is available at https://raw.githubusercontent.com/samertall/flowpilot-omni/main/docs/flowpilot-verified-demo.mp4 .
+
+Suggested answers grounded in the actual build:
+
+- **Contract addresses:** Base Sepolia (84532): PaymentGate `0xf576B471ABE85087D20E053256AF8b8858fC9f89`. Lasna (5318007): OmniRelay V2 `0x79e01302E20347911352c717c38129274C78d606`. Unichain Sepolia (1301): PayoutVault V2 `0x401859D55E599300fFaE1DbEE07B0B6C87F1d300` and demo MockUSD `0x08b5f621d08153110d27c27A1BE5AD185d97E1f6`. Callback proxy `0x775c9B990ADe401060B78D0e98684eEf8d2466C1`.
+- **Origin-to-callback transaction hashes:** Base `0xe2bd03244e06ef405682f82e87158072468f68ec6f026e06b3beb26b23fc86bf`; Lasna `0xf305110afc82c9b0ce3af75a68ac9c7b7dbcf1154dd3946d23841aeac783a8fa`; Unichain `0xd9eb71621529ebadfa5cfc1ffde2b953b18932b18a42eece76d2de8473ad2084`.
+- **Hardest part:** Adapting to Reactive's updated callback proxy, authenticating the cross-chain callback, and debugging fee reserves while preserving verifiable on-chain evidence.
+- **Most relevant track:** Set It and Forget It.
+- **Technical background:** Uses Solidity 0.8.29, Foundry and Reactive Omni in this project. Answer any questions about whether it is your *first* smart contract according to your own experience.
+- **How did you hear about the buildathon?** Enter your actual source; the user originally supplied the official DoraHacks event page.
+- **Solo or team:** Choose your actual team status.
+- **Latency:** No rigorous latency benchmark is claimed.
+- **Agreement:** Read and accept the site's Terms of Use and Participant Agreement, then click **Submit for Review**. Obtain an explicit confirmation before saying the submission succeeded.
+
+The TinyFish browser automation service ran out of available execution credit after a public BUIDL was saved; this is not a DoraHacks fee and no paid top-up is required for manual completion.
