@@ -1,15 +1,9 @@
 {
   "phase": "migrate",
   "confirm_testnet_broadcast": "yes",
-  "reason": "Replace pre-Omni callback proxy with officially documented Unichain Sepolia proxy; redeploy only matched relay+vault using testnet funds",
-  "source": "https://dev.reactive.network/origins-and-destinations",
-  "proxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
-  "reuse": [
-    "Base PaymentGate",
-    "Unichain MockUSD"
-  ],
-  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "maxRelayDepositLReact": "0.06",
-  "maxProxyDepositTestETH": "0.003",
+  "reason": "Resume verified V2 relay+vault, set new destination and fund current official Unichain Sepolia callback proxy; avoid duplicate deploy",
+  "v2Relay": "0x79e01302E20347911352c717c38129274C78d606",
+  "v2Vault": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
+  "officialProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
   "date": "2026-11-23"
 }
