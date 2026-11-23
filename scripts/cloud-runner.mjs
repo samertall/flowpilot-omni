@@ -371,6 +371,33 @@ async function inspect() {
     out.error=e?.shortMessage||e?.message||String(e);
     out.rawError=e?.data||e?.info?.error?.data||'';
   }
+  if(existsSync(evidencePath)){
+    const e=JSON.parse(readFileSync(evidencePath,'utf8'));
+    const sys=new Contract(ADDRS.system,['function reserves(address) view returns(uint256)','function debts(address) view returns(uint256)'],providers.lasna);
+    const proxy=new Contract(ADDRS.proxy,['function reserves(address) view returns(uint256)','function debts(address) view returns(uint256)'],providers.uni);
+    const relay=new Contract(d.lasna.omniRelay,['function processed(bytes32) view returns(bool)','function destination() view returns(address)'],providers.lasna);
+    const ruleReader=new Contract(d.unichainSepolia.payoutVault,[
+      'function rules(bytes32) view returns(address sponsor,address merchant,address beneficiary,uint256 payoutAmount,uint256 minSourcePayment,uint64 expiry,uint8 state)'
+    ],providers.uni);
+    const safe=async(p)=>{try{const v=await p;return typeof v==='bigint'?v.toString():v;}catch(err){return 'RPC ERROR: '+(err?.shortMessage||err?.message||String(err)).slice(0,150);}};
+    const rule=await safe(ruleReader.rules(e.ruleId));
+    const receipt= e.transactions?.reactive?.hash ? await safe(providers.lasna.getTransactionReceipt(e.transactions.reactive.hash)) : null;
+    out.callbackDiagnostic={
+      ruleId:e.ruleId,proofId:e.proofId,sourceTx:e.transactions?.origin?.hash||null,reactiveTx:e.transactions?.reactive?.hash||null,
+      lasnaWalletBalance:formatEther(await providers.lasna.getBalance(account)),
+      lasnaContractBalance:formatEther(await providers.lasna.getBalance(d.lasna.omniRelay)),
+      lasnaReserveWei:await safe(sys.reserves(d.lasna.omniRelay)),
+      lasnaDebtWei:await safe(sys.debts(d.lasna.omniRelay)),
+      uniReserveWei:await safe(proxy.reserves(d.unichainSepolia.payoutVault)),
+      uniDebtWei:await safe(proxy.debts(d.unichainSepolia.payoutVault)),
+      relayHasProcessedProof:await safe(relay.processed(e.proofId)),
+      relayDestination:await safe(relay.destination()),
+      ruleState:rule?.state==null?String(rule).slice(0,220):Number(rule.state),
+      rulePayoutAmount:rule?.payoutAmount?.toString()||null,
+      relayReceiptStatus:receipt?.status??null,
+      relayReceiptLogs:receipt?.logs?.map(l=>({emitter:l.address,topics:l.topics,txHash:l.transactionHash})).slice(0,12)||[]
+    };
+  }
   json(resolve(root,'docs','CLOUD_ESCROW_INSPECTION.json'),out);
   console.log('ESCROW READ-ONLY DIAGNOSIS',JSON.stringify(out));
 }
