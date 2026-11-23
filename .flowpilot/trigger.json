@@ -1,13 +1,10 @@
 {
-  "phase": "deploy",
+  "phase": "demo",
   "confirm_testnet_broadcast": "yes",
-  "mode": "resume_four_confirmed_contracts",
-  "pendingSteps": [
-    "setDestination",
-    "fundRelay",
-    "fundProxy"
-  ],
-  "safety": "lasna capped gas; no duplicate deployment, no duplicate deposits",
+  "purpose": "Execute one real FlowPilot payment to payout proof on funded Base Sepolia, Lasna Omni, Unichain Sepolia",
+  "contractManifest": "deployments/lasna.json",
+  "testPaymentETH": "0.00005",
+  "testEscrowFUSD": "25",
   "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
   "date": "2026-11-23"
 }
