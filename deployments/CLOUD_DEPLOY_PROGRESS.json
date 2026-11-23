@@ -16,6 +16,20 @@
       "txHash": "0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
       "explorer": "https://sepolia.uniscan.xyz/tx/0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
       "block": 68564399
+    },
+    "OmniRelay": {
+      "chain": "lasna",
+      "address": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
+      "txHash": "0xf7ef432a4d6f6fc6272b2eec7e90c135346cd39dfa4e29cb2140e69e1c6abaab",
+      "explorer": "https://lasna-omni.reactscan.net/tx/0xf7ef432a4d6f6fc6272b2eec7e90c135346cd39dfa4e29cb2140e69e1c6abaab",
+      "block": 9036817
+    },
+    "PayoutVault": {
+      "chain": "uni",
+      "address": "0xf576B471ABE85087D20E053256AF8b8858fC9f89",
+      "txHash": "0x82caa67a78bf73c939fcd248ee814c98a338dfd05a3a2dfe2e2c09607bfc3168",
+      "explorer": "https://sepolia.uniscan.xyz/tx/0x82caa67a78bf73c939fcd248ee814c98a338dfd05a3a2dfe2e2c09607bfc3168",
+      "block": 68564703
     }
   }
 }
