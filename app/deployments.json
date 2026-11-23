@@ -1,7 +1,27 @@
 {
-  "network": "Lasna Omni testnet",
+  "network": "Reactive Lasna Omni testnet",
   "chainId": 5318007,
-  "baseSepolia": { "chainId": 84532, "paymentGate": "" },
-  "unichainSepolia": { "chainId": 1301, "mockUSD": "", "payoutVault": "", "callbackProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4" },
-  "lasna": { "chainId": 5318007, "omniRelay": "" }
+  "deployer": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "baseSepolia": {
+    "chainId": 84532,
+    "paymentGate": "0xf576B471ABE85087D20E053256AF8b8858fC9f89",
+    "deploymentTx": "0x792bf01fb6b8128038abb1213a9e9ca70d7200c7318845d64d015c3b4c01674f"
+  },
+  "unichainSepolia": {
+    "chainId": 1301,
+    "mockUSD": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
+    "mockUSDDeploymentTx": "0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
+    "payoutVault": "0xf576B471ABE85087D20E053256AF8b8858fC9f89",
+    "vaultDeploymentTx": "0x82caa67a78bf73c939fcd248ee814c98a338dfd05a3a2dfe2e2c09607bfc3168",
+    "callbackProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4"
+  },
+  "lasna": {
+    "chainId": 5318007,
+    "omniRelay": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
+    "deploymentTx": "0xf7ef432a4d6f6fc6272b2eec7e90c135346cd39dfa4e29cb2140e69e1c6abaab",
+    "setDestinationTx": "0x54cc7a4316f8b2dd4ead40bc6abf76dbd64ccbd8146e8608dcda36202b501f82",
+    "systemDepositTx": "0xda4466b441e455c5c799ac431790e7c8e7e5a99a7f66543d9dc4d1da8e070202"
+  },
+  "callbackProxyDepositTx": "0x2c82b0acae832998de1a6241bfdbcb6e7662790fc49e28ce35b7d893b06711fd",
+  "cloudDeploymentConfirmedAt": "2026-11-23T07:01:23.598Z"
 }
