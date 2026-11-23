@@ -4,7 +4,7 @@
 
 FlowPilot is an open-source, wallet-connected automation builder that releases **prefunded demo escrow tokens on Unichain Sepolia** when a **qualifying native ETH payment occurs on Base Sepolia**, using **Reactive Omni's Lasna testnet** as the only execution relay.
 
-> **Current status (2026-11-19):** GitHub Actions successfully compiled the Solidity contracts and passed the Foundry test suite. The web UI is available, and a wallet-based deployment wizard has been added. **No real three-chain transaction or callback has yet been verified.** This is not proof of a live deployment. There are no fabricated transaction IDs or contract addresses.
+> **VERIFIED three-chain execution (2026-11-23).** A real Base Sepolia `PaymentMade` event triggered `OmniRelay` on Reactive Lasna, followed by an authenticated Unichain Sepolia `PayoutExecuted` callback. All three real receipts and the paid escrow state were checked in GitHub Actions. **[Watch the 72-second verified demo](docs/flowpilot-verified-demo.mp4)** · **[Inspect proof JSON](docs/CLOUD_EVIDENCE.json)** · **[Judge-ready DoraHacks submission](docs/SUBMISSION.md)**. This is an unaudited testnet-only prototype.
 
 ## The user problem
 
@@ -55,7 +55,7 @@ Official docs: https://dev.reactive.network/reactive-contracts and https://dev.r
 
 ## IMPORTANT: Hosted deployment wizard safety check
 
-**Deployment safety check (revised November 23, 2026):** The source wizard is configured for the documented post-Omni Unichain Sepolia callback proxy `0x775c9B990ADe401060B78D0e98684eEf8d2466C1` and the working Lasna RPC `https://lasna-rpc.rnk.dev/`. The previous vault, deployed against the pre-Omni proxy, needs migration before end-to-end proof. The cloud GitHub Actions workflow is recommended when local tooling is unavailable. Wallet: `0x24E895cBE3c427E08A7A013553813933cffeB68A`. Current balances after the verified Reactive faucet: approximately `0.0031998464 Base Sepolia test ETH`, `0.18 lREACT`, and `0 Unichain Sepolia test ETH`. **Do not deploy until the Unichain wallet has testnet gas.**
+**Deployment status (verified November 23, 2026):** The project has successfully migrated to the current official Unichain Sepolia Callback Proxy `0x775c9B990ADe401060B78D0e98684eEf8d2466C1`. The V2 relay and payout vault are deployed and callback-funded. Earlier attempts against the pre-Omni callback proxy `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4` are archived; do not use those obsolete contract addresses. Use the active [deployment manifest](app/deployments.json), [verified test evidence](docs/CLOUD_EVIDENCE.json), and [published demo video](docs/flowpilot-verified-demo.mp4) when reviewing the project. No additional deployment is required for the proven test flow.
 
 Official reference: https://dev.reactive.network/origins-and-destinations#testnet-chains
 
@@ -124,7 +124,7 @@ Judges require the **full loop**, not just unit tests. Capture the following aft
 - Four verified deployed contract addresses, and `setDestination` transaction hash.
 - Timings from actual transaction receipts. **Do not claim a measured 1-second end-to-end execution without measuring it.** The ~1-second figure refers to Omni's block interval.
 
-Fill in [`docs/EVIDENCE.md`](docs/EVIDENCE.md) from live chain explorers. **Do not submit an unverified local simulation as on-chain evidence.**
+The real transaction hashes and verification checklist are now recorded in [`docs/EVIDENCE.md`](docs/EVIDENCE.md) and [`docs/CLOUD_EVIDENCE.json`](docs/CLOUD_EVIDENCE.json). The test was executed on-chain, not simulated.
 
 ### Machine-verifiable proof (after deployment, never before)
 
