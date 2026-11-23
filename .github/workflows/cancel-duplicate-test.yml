@@ -1,0 +1,21 @@
+name: Cancel redundant FlowPilot proof run
+on:
+  push:
+    branches: [main]
+    paths: ['.flowpilot/cancel-duplicate-trigger.json']
+permissions:
+  contents: read
+  actions: write
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Cancel only duplicate run 45133036257
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "Requesting cancellation of the single known duplicate run."
+          gh run cancel 45133036257 --repo samertall/flowpilot-omni
+          echo "Cancellation request sent."
