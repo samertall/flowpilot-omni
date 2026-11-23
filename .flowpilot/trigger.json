@@ -1,8 +1,13 @@
 {
-  "phase": "preflight",
-  "confirm_testnet_broadcast": "no",
-  "note": "Check Unichain testnet 0.01 ETH faucet distribution received November 23, 2026. Read-only funds check before any deployment",
-  "network": "Unichain Sepolia",
+  "phase": "deploy",
+  "confirm_testnet_broadcast": "yes",
+  "network": "Base Sepolia + Reactive Lasna + Unichain Sepolia (testnets only)",
   "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "date": "2026-11-23"
+  "reason": "User authorized FlowPilot cloud deploy and 0.01 Unichain test ETH now verified",
+  "fundingConfirmed": {
+    "baseSepoliaETH": "0.003199846417999908",
+    "lasnaLReact": "0.18",
+    "unichainSepoliaETH": "0.01"
+  },
+  "requestDate": "2026-11-23"
 }
