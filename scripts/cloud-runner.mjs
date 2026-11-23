@@ -166,7 +166,9 @@ async function deploy() {
   const balances = await checkFunds();
   if(balances.base < parseEther('0.003')) throw Error('Insufficient Base Sepolia ETH for deployment and demo. Fund testnet wallet via a faucet first.');
   if(balances.uni < parseEther('0.006')) throw Error('Insufficient Unichain Sepolia test ETH to deploy contracts, fund proxy and create rule.');
-  if(balances.lasna < parseEther('0.15')) throw Error('Insufficient Lasna testnet lREACT. Fund from official Reactive test faucet first.');
+  const alreadyDeployedRelay=existsSync(draftPath)&&Boolean(JSON.parse(readFileSync(draftPath,'utf8')).steps?.OmniRelay);
+  const minLasna=alreadyDeployedRelay ? parseEther('0.075') : parseEther('0.15');
+  if(balances.lasna < minLasna) throw Error('Insufficient Lasna lREACT for '+(alreadyDeployedRelay?'resumed configuration and deposit':'fresh deployment')+'. Need '+formatEther(minLasna)+' lREACT.');
   const depositRelay=parseEther('0.06');
   const depositVault=parseEther('0.003');
   const progress = existsSync(draftPath)
