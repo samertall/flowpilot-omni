@@ -1,9 +1,8 @@
 {
-  "phase": "demo",
-  "confirm_testnet_broadcast": "yes",
-  "reason": "Escrow read-only simulation passed on Unichain; reuse minted fUSD and existing 25 fUSD allowance",
-  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "expectedTestSourcePayment": "0.00005 Base Sepolia ETH",
-  "expectedPayout": "25 demo fUSD",
+  "phase": "inspect",
+  "confirm_testnet_broadcast": "no",
+  "purpose": "Read-only audit after verified Reactive relay but missing Unichain callback; inspect reserves/debts, rule state, receipt logs",
+  "originTx": "0xb8224d7e8a0de43e3ba624924a7e6919d8c4ca2e20b419d32391c2d2f6f420a3",
+  "relayTx": "0x3ba118c10d5ba9a8a0e78ce3e151a1b8c2239c4ca371c9e28e4773107986f006",
   "date": "2026-11-23"
 }
