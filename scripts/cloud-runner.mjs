@@ -14,7 +14,7 @@ import {
 
 const root = resolve(import.meta.dirname, '..');
 const phase = process.argv[2];
-const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify', 'diagnose'];
+const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify', 'diagnose', 'inspect'];
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
@@ -338,6 +338,42 @@ async function findProof(d,e) {
   e.status='PENDING_UNVERIFIED_CALLBACK'; e.lastCheckedAt=new Date().toISOString();json(evidencePath,e);
   throw Error('Timed out waiting for a confirmed relay + authenticated callback; hashes captured so far are saved. Rerun verify to continue without repeating the payment.');
 }
+async function inspect() {
+  // Public, read-only post-deployment state. No private key required and no transactions sent.
+  await safeNetworks();
+  const d=getDeployment();
+  const token=new Contract(d.unichainSepolia.mockUSD,[
+    'function balanceOf(address) view returns(uint256)',
+    'function allowance(address,address) view returns(uint256)',
+    'function claimed(address) view returns(bool)',
+    'function totalSupply() view returns(uint256)'
+  ],providers.uni);
+  const vault=new Contract(d.unichainSepolia.payoutVault,[
+    'function token() view returns(address)',
+    'function createRule(bytes32,address,address,uint256,uint256,uint64)'
+  ],providers.uni);
+  const [balance,allowance,claimed,totalSupply,vaultToken,uniGas]=await Promise.all([
+    token.balanceOf(account),token.allowance(account,d.unichainSepolia.payoutVault),
+    token.claimed(account),token.totalSupply(),vault.token(),providers.uni.getBalance(account)
+  ]);
+  const out={wallet:account,createdAt:new Date().toISOString(),token:d.unichainSepolia.mockUSD,
+    vault:d.unichainSepolia.payoutVault,balance:balance.toString(),allowance:allowance.toString(),
+    claimed,totalSupply:totalSupply.toString(),vaultToken,
+    uniGasETH:formatEther(uniGas),minPayoutUnits:parseUnits('25',6).toString(),
+    vaultTokenMatches:getAddress(vaultToken)===getAddress(d.unichainSepolia.mockUSD)};
+  try{
+    const ruleId=keccak256(AbiCoder.defaultAbiCoder().encode(['string','address'],['flowpilot-readonly-inspect',account]));
+    const expiry=BigInt(Math.floor(Date.now()/1000)+24*3600);
+    await vault.createRule.staticCall(ruleId,account,account,parseUnits('25',6),parseEther('0.00005'),expiry,{from:account});
+    out.ruleCreationSimulation='PASS_NO_TX_SENT';
+  }catch(e){
+    out.ruleCreationSimulation='REVERT_NO_TX_SENT';
+    out.error=e?.shortMessage||e?.message||String(e);
+    out.rawError=e?.data||e?.info?.error?.data||'';
+  }
+  json(resolve(root,'docs','CLOUD_ESCROW_INSPECTION.json'),out);
+  console.log('ESCROW READ-ONLY DIAGNOSIS',JSON.stringify(out));
+}
 async function demo() {
   if(process.env.CONFIRM_TESTNET_BROADCAST !== 'yes')throw Error('Demo requires workflow input confirm_testnet_broadcast=yes');
   await safeNetworks();
@@ -380,6 +416,7 @@ async function verify() {
 }
 try {
   if(phase==='diagnose') await diagnose();
+  if(phase==='inspect') await inspect();
   if(phase==='preflight') await preflight();
   if(phase==='faucet') await faucet();
   if(phase==='deploy') await deploy();
