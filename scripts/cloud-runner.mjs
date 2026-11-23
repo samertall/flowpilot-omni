@@ -14,7 +14,7 @@ import {
 
 const root = resolve(import.meta.dirname, '..');
 const phase = process.argv[2];
-const supported = ['preflight', 'faucet', 'topup', 'deploy', 'demo', 'verify', 'diagnose', 'inspect'];
+const supported = ['preflight', 'faucet', 'topup', 'deploy', 'demo', 'retry', 'verify', 'diagnose', 'inspect'];
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
@@ -455,7 +455,18 @@ async function demo() {
   await safeNetworks();
   const d=getDeployment();
   if(getAddress(d.deployer)!==getAddress(account)) throw Error('The testnet signer differs from the deployment owner.');
-  if(existsSync(evidencePath))throw Error('Existing demo evidence found. Use verify instead; refusing another payment.');
+  if(existsSync(evidencePath)){
+    if(phase!=='retry')throw Error('Existing demo evidence found. Use verify instead; refusing another payment.');
+    const previous=JSON.parse(readFileSync(evidencePath,'utf8'));
+    if(previous.status==='VERIFIED_THREE_CHAIN_PAYMENT_CALLBACK')throw Error('Original callback is already verified; no further payment needed.');
+    if(!previous.transactions?.reactive?.hash)throw Error('First attempt has no verified Reactive request; refusing second payment.');
+    const oldRule=new Contract(d.unichainSepolia.payoutVault,vaultAbi,providers.uni);
+    const current=await oldRule.rules(previous.ruleId);
+    if(Number(current.state)===2)throw Error('First escrow rule has already paid. Run verify; no new payment.');
+    const archive=resolve(root,'docs','CLOUD_EVIDENCE_ATTEMPT1.json');
+    if(!existsSync(archive))json(archive,previous);
+    console.log('Preserved first callback proof as CLOUD_EVIDENCE_ATTEMPT1.json; beginning exactly one new rule and source event.');
+  }else if(phase==='retry')throw Error('No earlier pending proof to retry. Run demo once first.');
   const token=new Contract(d.unichainSepolia.mockUSD,tokenAbi,signers.uni);
   const vault=new Contract(d.unichainSepolia.payoutVault,vaultAbi,signers.uni);
   const gate=new Contract(d.baseSepolia.paymentGate,gateAbi,signers.base);
@@ -502,7 +513,7 @@ try {
   if(phase==='faucet') await faucet();
   if(phase==='topup') await topup();
   if(phase==='deploy') await deploy();
-  if(phase==='demo') await demo();
+  if(phase==='demo'||phase==='retry') await demo();
   if(phase==='verify') await verify();
 } catch (err) {
   console.error('CLOUD PHASE FAILED (never claim submission without verified callback):',err?.shortMessage||err?.message||String(err));
