@@ -1,9 +1,15 @@
 {
-  "phase": "faucet",
+  "phase": "migrate",
   "confirm_testnet_broadcast": "yes",
-  "testnetBaseETH": "0.0014",
-  "expectedTestnetLReact": "0.14",
-  "purpose": "Fund corrected Reactive Lasna relay deployment after official Oct 2026 Unichain callback proxy upgrade",
+  "reason": "Replace pre-Omni callback proxy with officially documented Unichain Sepolia proxy; redeploy only matched relay+vault using testnet funds",
+  "source": "https://dev.reactive.network/origins-and-destinations",
+  "proxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
+  "reuse": [
+    "Base PaymentGate",
+    "Unichain MockUSD"
+  ],
   "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "maxRelayDepositLReact": "0.06",
+  "maxProxyDepositTestETH": "0.003",
   "date": "2026-11-23"
 }
