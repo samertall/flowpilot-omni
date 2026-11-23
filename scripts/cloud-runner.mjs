@@ -236,16 +236,39 @@ async function deploy() {
     saveStep(name,chain,address,r);
     return r;
   };
+  const lasnaLegacyOverrides=async(tx,reserve=0n)=>{
+    const estimate=BigInt(await readRpc('lasna','eth_estimateGas',[{
+      from:account,to:tx.to,data:tx.data,value:'0x'+(tx.value||0n).toString(16)
+    }],25000));
+    const gasLimit=estimate*120n/100n+10000n;
+    if(gasLimit>500000n)throw Error('Gas limit for Lasna system call exceeds safety cap');
+    const gasPrice=BigInt(await readRpc('lasna','eth_gasPrice'));
+    const balance=await providers.lasna.getBalance(account);
+    const required=gasLimit*gasPrice+(tx.value||0n)+reserve;
+    if(balance<required)throw Error('Insufficient lREACT for transaction, deposit and reserve: need '+formatEther(required)+', balance '+formatEther(balance));
+    console.log('Lasna legacy call max cost:',formatEther(gasLimit*gasPrice),'lREACT, value:',formatEther(tx.value||0n),'lREACT');
+    return {type:0,gasPrice,gasLimit};
+  };
   const gate=await deployContract('PaymentGate','base');
   const token=await deployContract('MockUSD','uni');
   const relay=await deployContract('OmniRelay','lasna',[84532, await gate.getAddress(),1301]);
   const vault=await deployContract('PayoutVault','uni',[await token.getAddress(),ADDRS.proxy,await relay.getAddress()]);
-  const setTx=await once('setDestination','lasna',await relay.getAddress(),async()=>relay.setDestination(await vault.getAddress()));
+  const setTx=await once('setDestination','lasna',await relay.getAddress(),async()=>{
+    const target=await vault.getAddress();
+    const tx=await relay.setDestination.populateTransaction(target);
+    const overrides=await lasnaLegacyOverrides(tx,depositRelay);
+    return relay.setDestination(target,overrides);
+  });
   // Required by official Reactive Network accounting model: system / proxy deposits.
   const depositAbi=['function depositTo(address) external payable'];
   const sys=new Contract(ADDRS.system,depositAbi,signers.lasna);
   const proxy=new Contract(ADDRS.proxy,depositAbi,signers.uni);
-  const relayFund=await once('fundRelay','lasna',ADDRS.system,async()=>sys.depositTo(await relay.getAddress(),{value:depositRelay}));
+  const relayFund=await once('fundRelay','lasna',ADDRS.system,async()=>{
+    const recipient=await relay.getAddress();
+    const tx=await sys.depositTo.populateTransaction(recipient,{value:depositRelay});
+    const overrides=await lasnaLegacyOverrides(tx);
+    return sys.depositTo(recipient,{value:depositRelay,...overrides});
+  });
   const proxyFund=await once('fundProxy','uni',ADDRS.proxy,async()=>proxy.depositTo(await vault.getAddress(),{value:depositVault}));
   const output={network:'Reactive Lasna Omni testnet',chainId:5318007,deployer:account,
     baseSepolia:{chainId:84532,paymentGate:await gate.getAddress(),deploymentTx:progress.steps.PaymentGate.txHash},
