@@ -1,13 +1,7 @@
 {
-  "phase": "deploy",
-  "confirm_testnet_broadcast": "yes",
-  "network": "Base Sepolia + Reactive Lasna + Unichain Sepolia (testnets only)",
-  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "reason": "User authorized FlowPilot cloud deploy and 0.01 Unichain test ETH now verified",
-  "fundingConfirmed": {
-    "baseSepoliaETH": "0.003199846417999908",
-    "lasnaLReact": "0.18",
-    "unichainSepoliaETH": "0.01"
-  },
-  "requestDate": "2026-11-23"
+  "phase": "diagnose",
+  "confirm_testnet_broadcast": "no",
+  "purpose": "Read-only Lasna RPC eth_estimateGas for OmniRelay; preserve existing PaymentGate and MockUSD deployed addresses",
+  "publicWallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "date": "2026-11-23"
 }
