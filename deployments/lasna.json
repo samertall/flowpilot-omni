@@ -11,17 +11,23 @@
     "chainId": 1301,
     "mockUSD": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
     "mockUSDDeploymentTx": "0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
-    "payoutVault": "0xf576B471ABE85087D20E053256AF8b8858fC9f89",
-    "vaultDeploymentTx": "0x82caa67a78bf73c939fcd248ee814c98a338dfd05a3a2dfe2e2c09607bfc3168",
-    "callbackProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4"
+    "payoutVault": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
+    "vaultDeploymentTx": "0xf866069f0187b97f8324426d5d37ece30dd53d3166cb927a0fd4e78a27bc2a25",
+    "callbackProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1"
   },
   "lasna": {
     "chainId": 5318007,
-    "omniRelay": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
-    "deploymentTx": "0xf7ef432a4d6f6fc6272b2eec7e90c135346cd39dfa4e29cb2140e69e1c6abaab",
-    "setDestinationTx": "0x54cc7a4316f8b2dd4ead40bc6abf76dbd64ccbd8146e8608dcda36202b501f82",
-    "systemDepositTx": "0xda4466b441e455c5c799ac431790e7c8e7e5a99a7f66543d9dc4d1da8e070202"
+    "omniRelay": "0x79e01302E20347911352c717c38129274C78d606",
+    "deploymentTx": "0x5b222d64e65ef2a85616431a05ec62f8d3c391414b25a95dfc0efd137acea4dd",
+    "setDestinationTx": "0x68842cc97435f53bca83e0e3443e9559ad20a5c806a93224396bc01d4c8198b1",
+    "systemDepositTx": "0x1d9a693226fe9e7c85df5c8b0658008175eb6e2a508ce49cd712353137c7c5fb"
   },
-  "callbackProxyDepositTx": "0x2c82b0acae832998de1a6241bfdbcb6e7662790fc49e28ce35b7d893b06711fd",
-  "cloudDeploymentConfirmedAt": "2026-11-23T07:01:23.598Z"
+  "callbackProxyDepositTx": "0xe531abb5f893e1e8945ab1bbdcc8be8bf88057255698678f5aca21c81c0659c8",
+  "cloudDeploymentConfirmedAt": "2026-11-23T07:01:23.598Z",
+  "migration": {
+    "reason": "Official post-Omni Unichain callback proxy upgraded",
+    "officialProxySource": "https://dev.reactive.network/origins-and-destinations",
+    "supersedes": "deployments/lasna-legacy.json",
+    "completedAt": "2026-11-23T07:41:00.458Z"
+  }
 }

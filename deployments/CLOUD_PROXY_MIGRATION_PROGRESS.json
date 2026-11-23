@@ -1,5 +1,5 @@
 {
-  "status": "IN_PROGRESS_NOT_VERIFIED",
+  "status": "MIGRATED_CORRECT_PROXY_FUNDED_DEMO_NOT_VERIFIED",
   "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
   "previousProxy": "0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4",
   "newProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
@@ -16,6 +16,25 @@
       "address": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
       "hash": "0xf866069f0187b97f8324426d5d37ece30dd53d3166cb927a0fd4e78a27bc2a25",
       "block": 68567097
+    },
+    "SetDestinationV2": {
+      "chain": "lasna",
+      "address": "0x79e01302E20347911352c717c38129274C78d606",
+      "hash": "0x68842cc97435f53bca83e0e3443e9559ad20a5c806a93224396bc01d4c8198b1",
+      "block": 9039200
+    },
+    "FundRelayV2": {
+      "chain": "lasna",
+      "address": "0x8888888888888888888888888888888888888888",
+      "hash": "0x1d9a693226fe9e7c85df5c8b0658008175eb6e2a508ce49cd712353137c7c5fb",
+      "block": 9039207
+    },
+    "FundProxyV2": {
+      "chain": "uni",
+      "address": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
+      "hash": "0xe531abb5f893e1e8945ab1bbdcc8be8bf88057255698678f5aca21c81c0659c8",
+      "block": 68567229
     }
-  }
+  },
+  "completedAt": "2026-11-23T07:41:00.458Z"
 }
