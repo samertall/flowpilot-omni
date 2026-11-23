@@ -13,6 +13,7 @@ on:
         default: preflight
         options:
           - preflight
+          - diagnose
           - faucet
           - deploy
           - demo
@@ -36,7 +37,7 @@ concurrency:
 jobs:
   cloud:
     name: Cloud testnet (approved operation)
-    if: ${{ github.event_name == 'push' || inputs.phase == 'preflight' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
+    if: ${{ github.event_name == 'push' || inputs.phase == 'preflight' || inputs.phase == 'diagnose' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -70,7 +71,7 @@ jobs:
           else:
               phase=os.environ.get('WORKFLOW_PHASE','')
               confirm=os.environ.get('WORKFLOW_CONFIRM','no')
-          if phase not in {'preflight','faucet','deploy','demo','verify'}:
+          if phase not in {'preflight','diagnose','faucet','deploy','demo','verify'}:
               raise SystemExit('Invalid cloud testnet phase')
           if phase in {'faucet','deploy','demo'} and confirm!='yes':
               raise SystemExit('On-chain transactions require explicit testnet approval')
@@ -85,7 +86,7 @@ jobs:
       - name: Install dependencies with lifecycle scripts disabled
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Compile and test the contracts (before signing)
-        if: ${{ steps.approval.outputs.phase == 'deploy' }}
+        if: ${{ steps.approval.outputs.phase == 'deploy' || steps.approval.outputs.phase == 'diagnose' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -126,6 +127,7 @@ jobs:
           name: flowpilot-${{ steps.approval.outputs.phase }}-${{ github.run_id }}
           path: |
             docs/CLOUD_PREFLIGHT.json
+            docs/CLOUD_LASNA_DIAGNOSIS.json
             docs/CLOUD_FAUCET.json
             deployments/CLOUD_DEPLOY_PROGRESS.json
             deployments/lasna.json
