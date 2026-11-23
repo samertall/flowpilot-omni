@@ -1,0 +1,21 @@
+{
+  "status": "IN_PROGRESS_NOT_VERIFIED",
+  "deployer": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "startedAt": "2026-11-23T06:53:44.589Z",
+  "steps": {
+    "PaymentGate": {
+      "chain": "base",
+      "address": "0xf576B471ABE85087D20E053256AF8b8858fC9f89",
+      "txHash": "0x792bf01fb6b8128038abb1213a9e9ca70d7200c7318845d64d015c3b4c01674f",
+      "explorer": "https://sepolia.basescan.org/tx/0x792bf01fb6b8128038abb1213a9e9ca70d7200c7318845d64d015c3b4c01674f",
+      "block": 62474783
+    },
+    "MockUSD": {
+      "chain": "uni",
+      "address": "0x08b5f621d08153110d27c27A1BE5AD185d97E1f6",
+      "txHash": "0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
+      "explorer": "https://sepolia.uniscan.xyz/tx/0x2119f70998db72d23ecb42a621d1472144119d7aecf4093e243a968279b8ca9e",
+      "block": 68564399
+    }
+  }
+}
