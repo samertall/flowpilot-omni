@@ -1,8 +1,10 @@
 {
-  "phase": "inspect",
-  "confirm_testnet_broadcast": "no",
-  "purpose": "Check original callback delivery after Reactive reserve increase to 0.13 lREACT",
-  "relayTx": "0x3ba118c10d5ba9a8a0e78ce3e151a1b8c2239c4ca371c9e28e4773107986f006",
-  "topupTx": "0x545e0f2fa8ab07d1f07cfbc38b2cfbda859b8baa0e78eaa0c2fbca5ddd225b08",
+  "phase": "retry",
+  "confirm_testnet_broadcast": "yes",
+  "reason": "Original CallbackRequest remains undelivered; rerun exactly one separate source payment after relay reserve was increased to 0.13 lREACT",
+  "preserveOriginalEvidence": "docs/CLOUD_EVIDENCE_ATTEMPT1.json",
+  "amountTestBaseETH": "0.00005",
+  "payoutMockFUSD": "25",
+  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
   "date": "2026-11-23"
 }
