@@ -1,0 +1,11 @@
+{
+  "status": "LASNA_FAUCET_RECEIVED",
+  "deployer": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
+  "sourceTxHash": "0x1bf59c13ac2101ded8b60ae8588bfb9534f6fecf9d390ab60c271bc07d55185b",
+  "explorer": "https://sepolia.basescan.org/tx/0x1bf59c13ac2101ded8b60ae8588bfb9534f6fecf9d390ab60c271bc07d55185b",
+  "testnetETHSent": "0.001",
+  "lasnaBalanceBefore": "0.0359295",
+  "requestedAt": "2026-11-23T07:20:48.163Z",
+  "lasnaBalanceAfter": "0.1359295",
+  "receivedAt": "2026-11-23T07:21:03.985Z"
+}
