@@ -14,7 +14,7 @@ import {
 
 const root = resolve(import.meta.dirname, '..');
 const phase = process.argv[2];
-const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify'];
+const supported = ['preflight', 'faucet', 'deploy', 'demo', 'verify', 'diagnose'];
 if (!supported.includes(phase)) throw Error(`Unknown phase: ${phase}; choose ${supported.join(', ')}`);
 const ADDRS = {
   system: '0x8888888888888888888888888888888888888888',
@@ -127,6 +127,37 @@ async function faucet() {
   }
   throw Error('Faucet tx confirmed on Base but Lasna delivery not observed within five minutes. Do NOT repeat request without checking explorer/funding first.');
 }
+async function diagnose() {
+  // Read-only: simulate the exact Lasna constructor deployment; never broadcast or sign.
+  await safeNetworks();
+  const p=JSON.parse(readFileSync(draftPath,'utf8'));
+  if(getAddress(p.deployer)!==getAddress(account))throw Error('Wallet does not match saved partial deployment.');
+  const origin=p.steps?.PaymentGate?.address;
+  if(!origin)throw Error('Saved PaymentGate address required.');
+  const {abi,bytecode}=readArtifact('OmniRelay');
+  const tx=await new ContractFactory(abi,bytecode,signers.lasna).getDeployTransaction(84532,origin,1301);
+  const out={address:account,lasnaChainId:5318007,origin,createdAt:new Date().toISOString()};
+  for(const [key,method,params] of [
+    ['gasPrice','eth_gasPrice',[]],
+    ['nativeBalance','eth_getBalance',[account,'latest']],
+    ['nonce','eth_getTransactionCount',[account,'pending']],
+    ['latestBlock','eth_blockNumber',[]]
+  ]){
+    try{out[key]=await readRpc('lasna',method,params);}catch(e){out[key+'Error']=e.message;}
+  }
+  try{
+    out.estimatedGas=await readRpc('lasna','eth_estimateGas',[{from:account,data:tx.data,value:'0x0'}],25000);
+    out.status='ESTIMATE_GAS_OK_NO_TX_SENT';
+    console.log('LASNA DEPLOY DRY RUN gas:',out.estimatedGas);
+  }catch(e){
+    out.status='ESTIMATE_GAS_REJECTED_NO_TX_SENT';
+    out.estimateError=e.message;
+    console.error('LASNA DEPLOY DRY RUN ERROR:',e.message);
+  }
+  json(resolve(root,'docs','CLOUD_LASNA_DIAGNOSIS.json'),out);
+  console.log('Lasna RPC diagnosis:',JSON.stringify(out));
+  if(out.status!=='ESTIMATE_GAS_OK_NO_TX_SENT')throw Error('Lasna read-only deployment simulation failed; no transactions were sent');
+}
 async function deploy() {
   if(process.env.CONFIRM_TESTNET_BROADCAST !== 'yes') throw Error('Deployment requires workflow input confirm_testnet_broadcast=yes');
   await safeNetworks();
@@ -138,7 +169,17 @@ async function deploy() {
   if(balances.lasna < parseEther('0.15')) throw Error('Insufficient Lasna testnet lREACT. Fund from official Reactive test faucet first.');
   const depositRelay=parseEther('0.06');
   const depositVault=parseEther('0.003');
-  const progress={status:'IN_PROGRESS_NOT_VERIFIED',deployer:account,startedAt:new Date().toISOString(),steps:{}};
+  const progress = existsSync(draftPath)
+    ? JSON.parse(readFileSync(draftPath, 'utf8'))
+    : {status:'IN_PROGRESS_NOT_VERIFIED',deployer:account,startedAt:new Date().toISOString(),steps:{}};
+  if(getAddress(progress.deployer)!==getAddress(account))throw Error('Partial deployment was created by a different wallet; will not reuse.');
+  if(progress.status==='DEPLOYED_AND_FUNDED_DEMO_NOT_VERIFIED')throw Error('Partial progress already marked completed; inspect deployment artifact instead.');
+  for(const step of Object.values(progress.steps||{})){
+    if(!['base','uni','lasna'].includes(step.chain)) throw Error('Invalid partial-deployment chain');
+    const r=await providers[step.chain].getTransactionReceipt(step.txHash);
+    if(!r||r.status!==1) throw Error('Stored partial deployment transaction not confirmed: '+step.txHash);
+  }
+  console.log('Resuming saved deployment; verified steps:',Object.keys(progress.steps||{}).join(', ')||'none');
   const saveStep=(name,chain,address,tx)=>{
     progress.steps[name]={chain,address,txHash:tx.hash,explorer:explorer[chain](tx.hash),block:tx.blockNumber};
     json(draftPath,progress);
@@ -146,29 +187,49 @@ async function deploy() {
   };
   const deployContract=async(name,chain,args=[])=>{
     const {abi,bytecode}=readArtifact(name);
+    const previous=progress.steps[name];
+    if(previous){
+      if(previous.chain!==chain)throw Error('Saved chain mismatch: '+name);
+      const r=await providers[chain].getTransactionReceipt(previous.txHash);
+      if(!r||r.status!==1||getAddress(r.contractAddress||ZeroAddress)!==getAddress(previous.address))
+        throw Error('Saved deployment receipt mismatch: '+name);
+      if((await providers[chain].getCode(previous.address))==='0x')throw Error('Saved contract is missing on chain: '+name);
+      console.log('[RESUME] Reusing deployed '+name+' at '+previous.address);
+      return new Contract(previous.address,abi,signers[chain]);
+    }
     const instance=await new ContractFactory(abi,bytecode,signers[chain]).deploy(...args);
     const dep=instance.deploymentTransaction();
-    if(!dep)throw Error(`No deployment transaction for ${name}`);
+    if(!dep)throw Error('No deployment transaction for '+name);
     const record=await receipt(dep,chain);
     const address=await instance.getAddress();
-    if((await providers[chain].getCode(address))==='0x')throw Error(`No runtime contract code for ${name}`);
+    if((await providers[chain].getCode(address))==='0x')throw Error('No runtime contract code for '+name);
     saveStep(name,chain,address,record);
     return instance;
+  };
+  const once=async(name,chain,address,fn)=>{
+    const previous=progress.steps[name];
+    if(previous){
+      if(previous.chain!==chain)throw Error('Saved step chain mismatch: '+name);
+      const r=await providers[chain].getTransactionReceipt(previous.txHash);
+      if(!r||r.status!==1)throw Error('Saved step failed verification: '+name);
+      console.log('[RESUME] Reusing confirmed step '+name+' '+previous.txHash);
+      return r;
+    }
+    const r=await receipt(await fn(),chain);
+    saveStep(name,chain,address,r);
+    return r;
   };
   const gate=await deployContract('PaymentGate','base');
   const token=await deployContract('MockUSD','uni');
   const relay=await deployContract('OmniRelay','lasna',[84532, await gate.getAddress(),1301]);
   const vault=await deployContract('PayoutVault','uni',[await token.getAddress(),ADDRS.proxy,await relay.getAddress()]);
-  const setTx=await receipt(await relay.setDestination(await vault.getAddress()),'lasna');
-  saveStep('setDestination','lasna',await relay.getAddress(),setTx);
+  const setTx=await once('setDestination','lasna',await relay.getAddress(),async()=>relay.setDestination(await vault.getAddress()));
   // Required by official Reactive Network accounting model: system / proxy deposits.
   const depositAbi=['function depositTo(address) external payable'];
   const sys=new Contract(ADDRS.system,depositAbi,signers.lasna);
   const proxy=new Contract(ADDRS.proxy,depositAbi,signers.uni);
-  const relayFund=await receipt(await sys.depositTo(await relay.getAddress(),{value:depositRelay}),'lasna');
-  saveStep('fundRelay','lasna',ADDRS.system,relayFund);
-  const proxyFund=await receipt(await proxy.depositTo(await vault.getAddress(),{value:depositVault}),'uni');
-  saveStep('fundProxy','uni',ADDRS.proxy,proxyFund);
+  const relayFund=await once('fundRelay','lasna',ADDRS.system,async()=>sys.depositTo(await relay.getAddress(),{value:depositRelay}));
+  const proxyFund=await once('fundProxy','uni',ADDRS.proxy,async()=>proxy.depositTo(await vault.getAddress(),{value:depositVault}));
   const output={network:'Reactive Lasna Omni testnet',chainId:5318007,deployer:account,
     baseSepolia:{chainId:84532,paymentGate:await gate.getAddress(),deploymentTx:progress.steps.PaymentGate.txHash},
     unichainSepolia:{chainId:1301,mockUSD:await token.getAddress(),mockUSDDeploymentTx:progress.steps.MockUSD.txHash,payoutVault:await vault.getAddress(),vaultDeploymentTx:progress.steps.PayoutVault.txHash,callbackProxy:ADDRS.proxy},
@@ -276,6 +337,7 @@ async function verify() {
   await findProof(d,e);
 }
 try {
+  if(phase==='diagnose') await diagnose();
   if(phase==='preflight') await preflight();
   if(phase==='faucet') await faucet();
   if(phase==='deploy') await deploy();
@@ -283,5 +345,8 @@ try {
   if(phase==='verify') await verify();
 } catch (err) {
   console.error('CLOUD PHASE FAILED (never claim submission without verified callback):',err?.shortMessage||err?.message||String(err));
+  if(err?.info?.error)console.error('RPC RESPONSE (no secrets):',JSON.stringify(err.info.error).slice(0,1800));
+  if(err?.error)console.error('NESTED ERROR (no secrets):',JSON.stringify(err.error).slice(0,1800));
+  if(err?.code)console.error('ERROR CODE:',err.code);
   process.exitCode=1;
 }
