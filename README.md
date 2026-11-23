@@ -48,14 +48,14 @@ A freelancer, marketplace operator or small team often wants a simple if-then pa
 | Reactive engine | Lasna Omni | 5318007 | `OmniRelay.sol` |
 | Destination | Unichain Sepolia | 1301 | `PayoutVault.sol` |
 | Test-only ERC20 | Unichain Sepolia | 1301 | `MockUSD.sol` |
-| Unichain Callback Proxy | Unichain Sepolia | 1301 | `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4` |
+| Unichain Callback Proxy | Unichain Sepolia | 1301 | `0x775c9B990ADe401060B78D0e98684eEf8d2466C1` |
 | Lasna System Contract | Lasna Omni | 5318007 | `0x8888888888888888888888888888888888888888` |
 
 Official docs: https://dev.reactive.network/reactive-contracts and https://dev.reactive.network/origins-and-destinations
 
 ## IMPORTANT: Hosted deployment wizard safety check
 
-**Deployment safety check (verified November 22, 2026):** The hosted wizard now contains the official Unichain Sepolia callback proxy `0x9299472A6399Fd1027ebF067571Eb3e3D7837FC4` and the working Lasna RPC `https://lasna-rpc.rnk.dev/`. The cloud GitHub Actions workflow is recommended when local tooling is unavailable. Wallet: `0x24E895cBE3c427E08A7A013553813933cffeB68A`. Current balances after the verified Reactive faucet: approximately `0.0031998464 Base Sepolia test ETH`, `0.18 lREACT`, and `0 Unichain Sepolia test ETH`. **Do not deploy until the Unichain wallet has testnet gas.**
+**Deployment safety check (revised November 23, 2026):** The source wizard is configured for the documented post-Omni Unichain Sepolia callback proxy `0x775c9B990ADe401060B78D0e98684eEf8d2466C1` and the working Lasna RPC `https://lasna-rpc.rnk.dev/`. The previous vault, deployed against the pre-Omni proxy, needs migration before end-to-end proof. The cloud GitHub Actions workflow is recommended when local tooling is unavailable. Wallet: `0x24E895cBE3c427E08A7A013553813933cffeB68A`. Current balances after the verified Reactive faucet: approximately `0.0031998464 Base Sepolia test ETH`, `0.18 lREACT`, and `0 Unichain Sepolia test ETH`. **Do not deploy until the Unichain wallet has testnet gas.**
 
 Official reference: https://dev.reactive.network/origins-and-destinations#testnet-chains
 
