@@ -382,7 +382,18 @@ async function inspect() {
     const safe=async(p)=>{try{const v=await p;return typeof v==='bigint'?v.toString():v;}catch(err){return 'RPC ERROR: '+(err?.shortMessage||err?.message||String(err)).slice(0,150);}};
     const rule=await safe(ruleReader.rules(e.ruleId));
     const receipt= e.transactions?.reactive?.hash ? await safe(providers.lasna.getTransactionReceipt(e.transactions.reactive.hash)) : null;
-    out.callbackDiagnostic={
+    let callbackRecords=null;
+    let callbackRecordError=null;
+    try{
+      const systemResults=new Contract(ADDRS.system,[
+        'function getCallbacks(uint256) view returns ((uint256,address,uint256,uint256,uint256,bytes)[])'
+      ],providers.lasna);
+      const results=await systemResults.getCallbacks(BigInt(e.transactions.reactive.hash));
+      callbackRecords=results.map(record=>Array.from(record, value=>typeof value==='bigint'?value.toString():String(value)));
+    }catch(err){
+      callbackRecordError=err?.shortMessage||err?.message||String(err);
+    }
+    out.callbackDiagnostic={callbackRecords,callbackRecordError,
       ruleId:e.ruleId,proofId:e.proofId,sourceTx:e.transactions?.origin?.hash||null,reactiveTx:e.transactions?.reactive?.hash||null,
       lasnaWalletBalance:formatEther(await providers.lasna.getBalance(account)),
       lasnaContractBalance:formatEther(await providers.lasna.getBalance(d.lasna.omniRelay)),
