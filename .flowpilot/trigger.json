@@ -1,12 +1,8 @@
 {
-  "phase": "demo",
-  "confirm_testnet_broadcast": "yes",
-  "purpose": "Verify Base Sepolia payment triggers corrected post-Omni Lasna relay and authenticated Unichain Sepolia proxy payout",
-  "wallet": "0x24E895cBE3c427E08A7A013553813933cffeB68A",
-  "relay": "0x79e01302E20347911352c717c38129274C78d606",
-  "vault": "0x401859D55E599300fFaE1DbEE07B0B6C87F1d300",
-  "officialProxy": "0x775c9B990ADe401060B78D0e98684eEf8d2466C1",
-  "paymentTestETH": "0.00005",
-  "payoutDemoFUSD": "25",
+  "phase": "verify",
+  "confirm_testnet_broadcast": "no",
+  "reason": "Read-only reconfirm existing three-chain callback and generate 72-second evidence video after ffmpeg CI fix",
+  "expectedCallback": "0xd9eb71621529ebadfa5cfc1ffde2b953b18932b18a42eece76d2de8473ad2084",
+  "doNotBroadcast": true,
   "date": "2026-11-23"
 }
