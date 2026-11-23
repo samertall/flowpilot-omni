@@ -14,6 +14,7 @@ on:
         options:
           - preflight
           - diagnose
+          - inspect
           - faucet
           - deploy
           - demo
@@ -37,7 +38,7 @@ concurrency:
 jobs:
   cloud:
     name: Cloud testnet (approved operation)
-    if: ${{ github.event_name == 'push' || inputs.phase == 'preflight' || inputs.phase == 'diagnose' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
+    if: ${{ github.event_name == 'push' || inputs.phase == 'preflight' || inputs.phase == 'diagnose' || inputs.phase == 'inspect' || inputs.phase == 'verify' || inputs.confirm_testnet_broadcast == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -71,7 +72,7 @@ jobs:
           else:
               phase=os.environ.get('WORKFLOW_PHASE','')
               confirm=os.environ.get('WORKFLOW_CONFIRM','no')
-          if phase not in {'preflight','diagnose','faucet','deploy','demo','verify'}:
+          if phase not in {'preflight','diagnose','inspect','faucet','deploy','demo','verify'}:
               raise SystemExit('Invalid cloud testnet phase')
           if phase in {'faucet','deploy','demo'} and confirm!='yes':
               raise SystemExit('On-chain transactions require explicit testnet approval')
@@ -128,6 +129,7 @@ jobs:
           path: |
             docs/CLOUD_PREFLIGHT.json
             docs/CLOUD_LASNA_DIAGNOSIS.json
+            docs/CLOUD_ESCROW_INSPECTION.json
             docs/CLOUD_FAUCET.json
             deployments/CLOUD_DEPLOY_PROGRESS.json
             deployments/lasna.json
