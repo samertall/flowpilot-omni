@@ -16,6 +16,7 @@ on:
           - diagnose
           - inspect
           - faucet
+          - topup
           - deploy
           - demo
           - verify
@@ -72,9 +73,9 @@ jobs:
           else:
               phase=os.environ.get('WORKFLOW_PHASE','')
               confirm=os.environ.get('WORKFLOW_CONFIRM','no')
-          if phase not in {'preflight','diagnose','inspect','faucet','deploy','demo','verify'}:
+          if phase not in {'preflight','diagnose','inspect','faucet','topup','deploy','demo','verify'}:
               raise SystemExit('Invalid cloud testnet phase')
-          if phase in {'faucet','deploy','demo'} and confirm!='yes':
+          if phase in {'faucet','topup','deploy','demo'} and confirm!='yes':
               raise SystemExit('On-chain transactions require explicit testnet approval')
           if confirm not in {'yes','no'}: raise SystemExit('Invalid approval value')
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:
@@ -131,6 +132,7 @@ jobs:
             docs/CLOUD_LASNA_DIAGNOSIS.json
             docs/CLOUD_ESCROW_INSPECTION.json
             docs/CLOUD_FAUCET.json
+            docs/CLOUD_RELAY_TOPUP.json
             deployments/CLOUD_DEPLOY_PROGRESS.json
             deployments/lasna.json
             docs/CLOUD_EVIDENCE.json
@@ -144,6 +146,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           test ! -f deployments/lasna.json || git add deployments/lasna.json app/deployments.json
+          test ! -f docs/CLOUD_FAUCET.json || git add docs/CLOUD_FAUCET.json
+          test ! -f docs/CLOUD_RELAY_TOPUP.json || git add docs/CLOUD_RELAY_TOPUP.json
           test ! -f docs/CLOUD_EVIDENCE.json || git add docs/CLOUD_EVIDENCE.json
           test ! -f docs/flowpilot-verified-demo.mp4 || git add docs/flowpilot-verified-demo.mp4
           if ! git diff --cached --quiet; then
